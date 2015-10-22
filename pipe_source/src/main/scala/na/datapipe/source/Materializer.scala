@@ -1,4 +1,4 @@
-package na.datapipe.consumer
+package na.datapipe.source
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -1,4 +1,4 @@
-package na.datapipe.consumer.engine
+package na.datapipe.source.engine
 
 /**
  * @author nader albert
@@ -14,7 +14,7 @@ case object LoadComplete extends Event
 case object TransformerJoined extends Event
 
 
-case class LineLoaded(id: Int) extends Event
+case class LineLoaded(id: Long) extends Event
 
 case class LoadingInterrupted(exception: Throwable) extends Event
 case class LoadingFailed(exception: Throwable) extends Event

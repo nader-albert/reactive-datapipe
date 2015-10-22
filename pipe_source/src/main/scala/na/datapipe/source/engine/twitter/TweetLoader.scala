@@ -1,9 +1,8 @@
-package na.datapipe.consumer.engine.twitter
+package na.datapipe.source.engine.twitter
 
 import akka.actor.Props
-import au.com.pwc.socialmedia.transformer.TransformTweet
-import na.datapipe.consumer.engine.ElementLoader
-
+import na.datapipe.source.engine.ElementLoader
+import na.datapipe.transformer.model.TransformTweet
 /**
  * @author nader albert
  * @since  4/08/2015.

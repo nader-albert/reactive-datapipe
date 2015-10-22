@@ -1,10 +1,10 @@
-package na.datapipe.consumer.engine
+package na.datapipe.source.engine
 
 import java.lang.System.currentTimeMillis
 import akka.actor.SupervisorStrategy.{Stop, Restart}
 import akka.actor._
 import com.typesafe.config.Config
-import na.datapipe.consumer.engine.twitter.TwitterLoader
+import na.datapipe.source.engine.twitter.TwitterLoader
 
 import scala.collection.immutable.HashMap
 import scala.util.Random

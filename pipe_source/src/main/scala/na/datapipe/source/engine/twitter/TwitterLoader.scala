@@ -1,8 +1,8 @@
-package na.datapipe.consumer.engine.twitter
+package na.datapipe.source.engine.twitter
 
 import java.util
 import java.util.concurrent.LinkedBlockingQueue
-import na.datapipe.consumer.engine.DataLoader
+import na.datapipe.source.engine.DataLoader
 
 import akka.actor.Props
 import com.twitter.hbc.ClientBuilder
@@ -11,7 +11,7 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor
 import com.twitter.hbc.core.{Constants, HttpHosts, Client}
 import com.twitter.hbc.httpclient.auth.OAuth1
 import com.typesafe.config.Config
-import na.datapipe.consumer.engine._
+import na.datapipe.source.engine._
 import spray.json.{JsString, JsValue, JsonReader}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.languageFeature.implicitConversions._

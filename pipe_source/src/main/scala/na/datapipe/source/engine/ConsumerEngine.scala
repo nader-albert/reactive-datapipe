@@ -1,4 +1,4 @@
-package na.datapipe.consumer.engine
+package na.datapipe.source.engine
 
 import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}

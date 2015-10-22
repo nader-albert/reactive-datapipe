@@ -1,7 +1,7 @@
-package na.datapipe.consumer.engine
+package na.datapipe.source.engine
 
-import akka.actor.Actor
-import akka.actor.ActorRef
+import akka.actor.{Terminated, Actor, ActorRef}
+import na.datapipe.transformer.model.{TransformElement, ElementTransformed}
 
 /**
  * @author nader albert
