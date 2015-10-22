@@ -3,8 +3,9 @@ package na.datapipe.source.engine
 import java.lang.System.currentTimeMillis
 import akka.actor.SupervisorStrategy.{Stop, Restart}
 import akka.actor._
-import com.typesafe.config.Config
+import com.typesafe.config.{ConfigException, Config}
 import na.datapipe.source.engine.twitter.TwitterLoader
+import na.datapipe.transformer.model.TransformerRegistration
 
 import scala.collection.immutable.HashMap
 import scala.util.Random
@@ -38,7 +39,9 @@ class LoadingGuardian(loadingConfig :Config) extends Actor{
   }
 
   override def receive: Receive = {
+    /*
     case StartFileLoad(fileSourceName) =>
+
 
       try {
         val fileConfig = sourcesConfig getConfig "files" getConfig fileSourceName
@@ -53,7 +56,7 @@ class LoadingGuardian(loadingConfig :Config) extends Actor{
         fileLoader ! ConnectToSource(FileSource(fileSourceName, fileConfig.getString("path"), None))
       } catch {
           case _:ConfigException.Missing => println("missing configuration !")//TODO: reply back with a failure message to the caller
-      }
+      } */
 
     case StartTwitterLoad(twitterSourceName) =>
       try {

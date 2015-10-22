@@ -2,6 +2,7 @@ package na.datapipe.source.engine.twitter
 
 import java.util
 import java.util.concurrent.LinkedBlockingQueue
+import au.datapipe.model.LocationDto
 import na.datapipe.source.engine.DataLoader
 
 import akka.actor.Props

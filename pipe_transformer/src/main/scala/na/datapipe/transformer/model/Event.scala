@@ -7,3 +7,4 @@ package na.datapipe.transformer.model
 trait Event
 
 case class ElementTransformed(id :Long) extends Event
+case object TransformerRegistration

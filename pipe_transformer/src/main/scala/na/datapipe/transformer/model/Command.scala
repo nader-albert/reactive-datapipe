@@ -6,6 +6,10 @@ package na.datapipe.transformer.model
  */
 trait Command
 
-case class TransformElement(text :String, id: Int) extends Command
-case class TransformTweet(text :String, id: Int) extends Command
+trait TransformElement extends Command {
+  val text :String
+  val id :Int
+}
+
+case class TransformTweet(text :String, id: Int) extends TransformElement
 

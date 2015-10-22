@@ -7,7 +7,7 @@ import akka.actor.Actor
  * @since  3/08/2015.
  */
 
-trait DataLoader extends Actor{
+trait DataLoader extends Actor {
   var connected = false
 
   override def postStop(){
