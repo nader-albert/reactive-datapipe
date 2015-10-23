@@ -7,5 +7,5 @@ It starts with a data source, that can be connected to any source of data stream
 
 Each Sink corresponds to a single destination. Several Sinks could be simultaneously connected to the same data pipe. The data will then translated, transformed and processed once and published to many places 
 
-Each data element passing through the pipe, is called [Data Pill].
+Each data element passing through the pipe, is called [Data Pill], and hence the pipe is called a pipe of data pills
 The pipe construction is designed to be lazy, meaning that it doesn't ignited until a Sink is connected to it.
