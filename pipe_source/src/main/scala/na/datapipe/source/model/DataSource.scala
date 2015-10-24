@@ -1,4 +1,4 @@
-package na.datapipe.source.engine
+package na.datapipe.source.model
 
 import scala.io.BufferedSource
 

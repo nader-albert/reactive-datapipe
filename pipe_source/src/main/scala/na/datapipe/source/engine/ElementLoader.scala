@@ -1,6 +1,7 @@
 package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
+import na.datapipe.source.model.{LineLoaded, TransformerJoined}
 import na.datapipe.transformer.model.{TransformElement, ElementTransformed}
 
 /**

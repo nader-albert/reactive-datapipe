@@ -2,6 +2,7 @@ package na.datapipe.source.engine
 
 import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
+import na.datapipe.source.model.{StopTwitterLoad, StartTwitterLoad}
 
 /**
  * @author nader albert

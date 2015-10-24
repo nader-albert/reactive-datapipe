@@ -13,6 +13,7 @@ import com.twitter.hbc.core.{Constants, HttpHosts, Client}
 import com.twitter.hbc.httpclient.auth.OAuth1
 import com.typesafe.config.Config
 import na.datapipe.source.engine._
+import na.datapipe.source.model._
 import spray.json.{JsString, JsValue, JsonReader}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.languageFeature.implicitConversions._
