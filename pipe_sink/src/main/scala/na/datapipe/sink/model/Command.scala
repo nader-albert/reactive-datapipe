@@ -8,12 +8,5 @@ trait Command{
   type Header
 }
 
-/*case class PublishRawPost(msg: AnyRef)
-case class PublishProcessedPost(msg: AnyRef)
-case class PublishEngagementPost(msg: AnyRef)
-
-case class PublishToFireBase(msg: HTTPMessage)
-case class PublishToNLP() */
-
 case class Swallow(pill :Pill, channel :Channel) extends Command
 
