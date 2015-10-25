@@ -2,7 +2,7 @@ package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
 import na.datapipe.source.model.{LineLoaded, TransformerJoined}
-import na.datapipe.transformer.model.{TransformElement, ElementTransformed}
+import na.datapipe.transformer.model.{Command, PillTransformed}
 
 /**
  * @author nader albert
@@ -26,7 +26,7 @@ trait ElementLoader extends Actor {
 
   override def receive: Receive = {
 
-     case Element(elem, id) if transformers.isEmpty => println("no available transformers !")
+     case Element(elem, id) if transformers isEmpty => println("no available transformers !")
 
      case Element(elem, id) =>
 
@@ -41,7 +41,7 @@ trait ElementLoader extends Actor {
       /**
        * Checking all Transformers currently in the cluster and picking one of them randomly (based on a sequential list)
        * */
-      jobCounter += 1
+       jobCounter += 1
 
        println(s"loading.... $elem")
 
@@ -59,10 +59,9 @@ trait ElementLoader extends Actor {
       val processor: ActorRef = Await.result(context.actorSelection(processorUrl).resolveOne(timeout), timeout)
       if(Random.nextBoolean) throw new LoadRuntimeException(new RuntimeException(" just a random dummy exception! "))
 
-      println("********* sending element: " + elem + " to processor ******** !" )
       processor ! ProcessCommand(elem) */
 
-    case ElementTransformed(id) => context.parent ! LineLoaded(id)
+    case PillTransformed(id) => context.parent ! LineLoaded(id)
 
     case TransformerJoined if !transformers.contains(sender) =>
       println ("a new transformer added to the list !")
@@ -78,5 +77,5 @@ trait ElementLoader extends Actor {
 
   val port :String
 
-  val transformCommand: (String,Int) => TransformElement
+  val transformCommand: (String,Int) => Command
 }

@@ -8,7 +8,7 @@ import na.datapipe.source.model._
  * @since  3/08/2015.
  */
 
-trait DataLoader extends Actor {
+trait StreamLoader extends Actor {
   var connected = false
 
   override def postStop(){
