@@ -4,7 +4,7 @@ import java.lang.System.currentTimeMillis
 import akka.actor.SupervisorStrategy.{Stop, Restart}
 import akka.actor._
 import com.typesafe.config.{ConfigException, Config}
-import na.datapipe.source.engine.twitter.hbc.HbcTwitterLoader
+import na.datapipe.source.engine.twitter.hbc.HosebirdTwitterLoader$
 import na.datapipe.source.model._
 import na.datapipe.transformer.model.TransformerRegistration
 
@@ -61,7 +61,7 @@ class LoadingGuardian(loadingConfig :Config) extends Actor{
       try {
         val twitterConfig = sourcesConfig getConfig "twitters" getConfig twitterSourceName
 
-        val twitterLoader = context.actorOf(HbcTwitterLoader.props(twitterConfig, transformersConfig),
+        val twitterLoader = context.actorOf(HosebirdTwitterLoader.props(twitterConfig, transformersConfig),
           "twitter-loader" + Random.nextInt(100))
 
         println("start twitter load command received !")
