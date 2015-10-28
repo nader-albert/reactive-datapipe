@@ -11,6 +11,7 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor
 import com.twitter.hbc.core.{Client, Constants, HttpHosts}
 import com.twitter.hbc.httpclient.auth.OAuth1
 import com.typesafe.config.Config
+import na.datapipe.sink.model.Pill
 import na.datapipe.source.engine.twitter.TweetLoader
 import na.datapipe.source.engine.{StreamLoader, _}
 import na.datapipe.source.model._
@@ -31,17 +32,17 @@ class HbcTwitterLoader(twitterConfig :Config, transformersHost: String, transfor
 
   private var client: Client = null
 
-  private val CLIENT_NAME = twitterConfig.getConfig("client").getString("name")
+  private val CLIENT_NAME = twitterConfig getConfig "client" getString "name"
 
-  private val authenticationConfig = twitterConfig.getConfig("authentication")
+  private val authenticationConfig = twitterConfig getConfig "authentication"
 
-  private val filterConfig = twitterConfig.getConfig("filters")
+  private val filterConfig = twitterConfig getConfig "filters"
 
   private val twitterAuthentication = new OAuth1(
-    authenticationConfig.getString("oauth.consumer.key"),
-    authenticationConfig.getString("oauth.consumer.secret"),
-    authenticationConfig.getString("oauth.token.key"),
-    authenticationConfig.getString("oauth.token.secret"))
+    authenticationConfig getString "oauth.consumer.key",
+    authenticationConfig getString "oauth.consumer.secret",
+    authenticationConfig getString "oauth.token.key",
+    authenticationConfig getString "oauth.token.secret")
 
   private val host = new HttpHosts(Constants.STREAM_HOST)
   private val endpoint = new StatusesFilterEndpoint
@@ -50,7 +51,7 @@ class HbcTwitterLoader(twitterConfig :Config, transformersHost: String, transfor
   /**
    * describes the mechanism of connecting to that specific source
    *  */
-  def connect(source: DataSource) ={
+  def connect(source: DataSource) = {
     val twitterSource = source match {
       case _ :TwitterSource => Some(TwitterSource(source.name, None))
       case _ => None
@@ -73,30 +74,25 @@ class HbcTwitterLoader(twitterConfig :Config, transformersHost: String, transfor
   /**
    * describes the mechanism of consuming from that specific source
    *  */
-  def consume(source: DataSource) ={
+  def consume(source: DataSource) = {
     val tweetLoader = context.actorOf(TweetLoader props(transformersHost, transformersPort), "tweet-loader" + nextInt)
 
-    val future = Future {
+    Future {
       while (connected) {
-        tweetLoader ! Element(msgQueue.take, nextInt(10000))
+        tweetLoader ! Pill(msgQueue.take, None, nextInt(10000))
       }
-    }
+    } onComplete {
+        case Success(numberOfLines) =>
+          println("load completed successfully! " + numberOfLines)
+          context.parent ! LoadComplete
 
-    future onComplete {
-      case Success(numberOfLines) => {
-        println("load completed successfully! " + numberOfLines);
-        context.parent ! LoadComplete
-      }
-      case Failure(exception :Throwable) => {
-        exception match {
-          case interrupt: LoadInterruptedException => {
-            println("interrupt signal received ! "); self ! LoadingInterrupted(interrupt)
+        case Failure(exception :Throwable) =>
+          exception match {
+            case interrupt: LoadInterruptedException => println("interrupt signal received ! ")
+              self ! LoadingInterrupted(interrupt)
+
+            case t :RuntimeException => println("runtime exception "); self ! LoadingFailed(t)
           }
-          case t :RuntimeException => {
-            println("runtime exception "); self ! LoadingFailed(t)
-          }
-        }
-      }
     }
   }
 

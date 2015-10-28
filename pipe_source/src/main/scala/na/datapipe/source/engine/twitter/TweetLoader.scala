@@ -2,13 +2,13 @@ package na.datapipe.source.engine.twitter
 
 import akka.actor.Props
 import na.datapipe.sink.model.Pill
-import na.datapipe.source.engine.ElementLoader
+import na.datapipe.source.engine.PillLoader
 import na.datapipe.transformer.model.Transform
 /**
  * @author nader albert
  * @since  4/08/2015.
  */
-class TweetLoader(transformersHost: String, transformersPort: String) extends ElementLoader {
+class TweetLoader(transformersHost: String, transformersPort: String) extends PillLoader {
   override val host = transformersHost
   override val port = transformersPort
 

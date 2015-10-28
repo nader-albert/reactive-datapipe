@@ -54,7 +54,6 @@ trait StreamLoader extends Actor {
     case LoadingFailed(exception) => throw new LoadRuntimeException(exception)
 
     case TransformerJoined => context.children.foreach(_ forward TransformerJoined)
-
   }
 
   protected def connect(source: DataSource):Option[DataSource]

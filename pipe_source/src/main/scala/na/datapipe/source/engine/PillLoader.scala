@@ -1,6 +1,7 @@
 package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
+import na.datapipe.sink.model.Pill
 import na.datapipe.source.model.{LineLoaded, TransformerJoined}
 import na.datapipe.transformer.model.{Command, PillTransformed}
 
@@ -8,9 +9,9 @@ import na.datapipe.transformer.model.{Command, PillTransformed}
  * @author nader albert
  * @since  4/08/2015.
  */
-case class Element(line: String, id: Int)
+//case class Element(line: String, id: Int)
 
-trait ElementLoader extends Actor {
+trait PillLoader extends Actor {
 
   var transformers = IndexedSeq.empty[ActorRef]
   var jobCounter = 0
@@ -26,9 +27,9 @@ trait ElementLoader extends Actor {
 
   override def receive: Receive = {
 
-     case Element(elem, id) if transformers isEmpty => println("no available transformers !")
+     case pill :Pill if transformers isEmpty => println("no available transformers !")
 
-     case Element(elem, id) =>
+     case Pill(elem, _, id) =>
 
       /** The old way to try to locate the remote transformer.
 
