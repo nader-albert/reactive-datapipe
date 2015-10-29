@@ -1,5 +1,6 @@
 package na.datapipe.processor.model
 
+import na.datapipe.model.Tweet
 import na.datapipe.sink.model.Pill
 
 /**
@@ -8,4 +9,4 @@ import na.datapipe.sink.model.Pill
  */
 trait Command
 
-case class Process(pill :Pill)
+case class Process(pill :Pill[Tweet])

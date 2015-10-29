@@ -10,6 +10,8 @@ lazy val pipe_transformer = project.in(file("pipe_transformer")).dependsOn(pipe_
 
 lazy val pipe_processor = project.in(file("pipe_processor")).dependsOn(pipe_sink)
 
-lazy val pipe_sink= project.in(file("pipe_sink"))
+lazy val pipe_sink = project.in(file("pipe_sink")).dependsOn(model)
+
+lazy val model = project.in(file("model"))
 
 lazy val root = (project in file(".")).aggregate(pipe_source, pipe_transformer, pipe_processor, pipe_sink)

@@ -1,5 +1,7 @@
 package na.datapipe.source.model
 
+import na.datapipe.sink.model.Pill
+
 /**
  * @author nader albert
  * @since  4/08/2015.
@@ -13,6 +15,8 @@ trait Command
 /**
  * An Event message is something that has just happened. You are notifying of the event that has just happened.
  * */
+
+case class Load(pill :Pill[String], id :Int)
 
 case class ConnectToSource(source: DataSource) extends Command
 case class ConsumeFromSource(source: DataSource) extends Command
