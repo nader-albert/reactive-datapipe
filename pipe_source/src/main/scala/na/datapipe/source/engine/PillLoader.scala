@@ -2,7 +2,7 @@ package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
 import na.datapipe.sink.model.Pill
-import na.datapipe.source.model.{LineLoaded, TransformerJoined}
+import na.datapipe.source.model.{Load, LineLoaded, TransformerJoined}
 import na.datapipe.transformer.model.{Command, PillTransformed}
 
 /**
@@ -27,9 +27,9 @@ trait PillLoader extends Actor {
 
   override def receive: Receive = {
 
-     case pill :Pill if transformers isEmpty => println("no available transformers !")
+     case load :Load if transformers isEmpty => println("no available transformers !")
 
-     case Pill(elem, _, id) =>
+     case Load(pill,id) =>
 
       /** The old way to try to locate the remote transformer.
 
@@ -44,9 +44,11 @@ trait PillLoader extends Actor {
        * */
        jobCounter += 1
 
-       println(s"loading.... $elem")
+       val text = pill.content
 
-       transformers(jobCounter % transformers.size) ! transformCommand(elem, id)
+       println(s"loading.... $text")
+
+       transformers(jobCounter % transformers.size) ! transformCommand(pill, id)
 
       // This is a trial code, to send the post to the processor directly without passing through the transformer...
       // should be deleted
@@ -78,5 +80,5 @@ trait PillLoader extends Actor {
 
   val port :String
 
-  val transformCommand: (String,Int) => Command
+  val transformCommand: (Pill[String],Int) => Command
 }

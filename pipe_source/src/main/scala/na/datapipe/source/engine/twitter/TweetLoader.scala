@@ -12,7 +12,7 @@ class TweetLoader(transformersHost: String, transformersPort: String) extends Pi
   override val host = transformersHost
   override val port = transformersPort
 
-  override val transformCommand = (tweet :String, id :Int) => Transform(Pill(tweet, Map()), id)
+  override val transformCommand = (tweetPill :Pill[String], id :Int) => Transform(tweetPill, id)
 }
 
 object TweetLoader {
