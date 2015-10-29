@@ -7,7 +7,7 @@ import spray.http.{HttpMethods, HttpEntity, Uri, HttpMethod}
  * @author nader albert
  * @since  23/10/2015.
  */
-case class HttpPill(content: Any, headers: Map[String, Any]) extends Pill {
+case class HttpPill(content :String, headers: Map[String, Any]) {
 
   //override type headers = Map[String, Any]
   //override type body = HttpEntity

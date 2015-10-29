@@ -5,8 +5,9 @@ package na.datapipe.sink.model
  * @since  23/10/2015.
  */
 
-//http method and uri should both go into the header
-trait Pill {
-  type headers
-  type body
-}
+/*trait DataContainer {
+  val content :String
+  val headers: Map[String, Any]
+}*/
+
+case class Pill[T] (content :T, headers: Option[Map[String, Any]], id: Int)

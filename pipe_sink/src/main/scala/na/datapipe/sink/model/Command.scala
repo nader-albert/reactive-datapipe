@@ -8,5 +8,5 @@ trait Command{
   type Header
 }
 
-case class Swallow(pill :Pill, channel :Channel) extends Command
+case class Swallow(pill :Pill[String], channel :Channel) extends Command
 

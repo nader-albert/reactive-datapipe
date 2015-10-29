@@ -36,7 +36,7 @@ class SinkGuardian(sinkConfig :Config) extends Actor {
       //TODO: discern the right publisher to send this message to
       camelSink ! CamelMessage(swallow.pill.toJson.toString, Map())
 
-    case swallow :Swallow if swallow.channel.name == "http" => httpSink forward swallow
+    case swallow :Swallow if swallow.channel.name == "http" => httpSink forward swallow //TODO: get it from the Pill header instead
   }
 }
 
@@ -45,13 +45,13 @@ object SinkGuardian {
 
   import scala.language.implicitConversions
 
-  implicit val pillWriter: JsonWriter[Pill] = JsonWriter.func2Writer(toJSON)
+  implicit val pillWriter: JsonWriter[Pill[String]] = JsonWriter.func2Writer(toJSON)
 
   /**
    * much better to write your own JSON parser so as to avoid reflection that would otherwise be utilized to, in case we
    * resort to an out of the box JSON Parser
    * */
-  def toJSON(post: Pill) :JsValue = //TODO provide a suitable transformation here for Pill
+  def toJSON(post: Pill[String]) :JsValue = //TODO provide a suitable transformation here for Pill
     JsObject(Map.empty[String, JsValue] updated ("conversation_id", JsString("post.getConversation_id"))) //post.getConversation_id)))
 }
 

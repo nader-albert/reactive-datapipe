@@ -45,8 +45,8 @@ class HttpSink extends Actor {
             case Success(response: HttpResponse) => {
               println {
                 " [status] => " + response.status +
-                  " [headers] => " + response.headers.foreach(println) +
-                  " [body] => " + response.entity.data.asString }
+                " [headers] => " + response.headers.foreach(println) +
+                " [body] => " + response.entity.data.asString }
               caller ! response
             }
             case Failure(exception) => println(exception getMessage)
