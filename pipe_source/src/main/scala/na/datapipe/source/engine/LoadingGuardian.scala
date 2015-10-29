@@ -4,7 +4,7 @@ import java.lang.System.currentTimeMillis
 import akka.actor.SupervisorStrategy.{Stop, Restart}
 import akka.actor._
 import com.typesafe.config.{ConfigException, Config}
-import na.datapipe.source.engine.twitter.hbc.{HosebirdTwitterLoader}
+import na.datapipe.source.engine.twitter.hbc.HosebirdTwitterLoader
 import na.datapipe.source.model._
 import na.datapipe.transformer.model.TransformerRegistration
 
