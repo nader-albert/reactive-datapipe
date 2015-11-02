@@ -42,4 +42,4 @@ The following modules represnt the main constituents of the Reactive Data Pipe.
 1. ``` TextPipe("bla bla bla").filter(Pill => Boolean).transform(Pill[A] -> Pill[B])((implicit evidence: A=>B)).translate().push( => Sink).materialize ``` 
 
 ## Introduce Akka Routing strategies
-1. Stop relying on trivial random routing logic, similar to the one used in the pipe-transformer module ```processingEngines(jobCounter % processingEngines.size) ! ProcessPill(pill) ``` 
+1. Stop relying on trivial random routing logic, similar to the one used in the pipe-transformer module ```processingEngines(jobCounter % processingEngines size) ! ProcessPill(pill) ``` 
