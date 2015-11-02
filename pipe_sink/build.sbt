@@ -22,6 +22,9 @@ Seq(
 //"com.typesafe.akka"   %%  "akka-persistence"  % akkaV,
   //"com.typesafe.akka"   %%  "akka-testkit"    % akkaV   % "test",
   "com.typesafe.akka"   %%  "akka-camel"    % "2.3.12",
+  "org.apache.camel"    % "camel-core"  % "2.15.2",
+  "org.apache.camel"    % "camel-rabbitmq"  % "2.15.2",
   "io.reactivex"        %%  "rxscala"        % "0.24.1",
   "org.scalatest"       %%  "scalatest"      % "2.2.4" % "test",
   "com.wandoulabs.akka" %%  "spray-websocket" % "0.1.3")}
+

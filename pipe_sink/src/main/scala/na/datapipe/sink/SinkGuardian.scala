@@ -5,7 +5,7 @@ import akka.camel.CamelMessage
 
 import com.typesafe.config.Config
 import na.datapipe.sink.model.{Pill, Swallow}
-import na.datapipe.sink.producers.camel.TweetSink
+import na.datapipe.sink.producers.camel.jms.TweetSink
 import na.datapipe.sink.producers.spray.HttpSink
 import spray.json.{JsonWriter, JsObject, JsValue, JsString}
 

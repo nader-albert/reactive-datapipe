@@ -34,10 +34,5 @@ object SinkEngine extends App {
   //val engBean: RabbitTemplate = ctx.getBean("engagementQueue", classOf[RabbitTemplate])
 
   val sink = system.actorOf(SinkGuardian.props(appConfig), name = "sink")
-
-  /*publisher ! PublishToFireBase(
-    HTTPMessage(PUT,
-    Uri("https://customer-mind.firebaseio.com/melbournecup/horses/users.json"),
-    Some("{ \"alanisawesome\": { \"name\": \"Alan Turing\", \"birthday\": \"June 23, 1912\" } }")))*/
 }
 

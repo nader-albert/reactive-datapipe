@@ -1,4 +1,4 @@
-package na.datapipe.sink.producers.camel
+package na.datapipe.sink.producers.camel.jms
 
 import akka.actor.Props
 import com.typesafe.config.Config
@@ -7,7 +7,7 @@ import com.typesafe.config.Config
  * @author nader albert
  * @since  6/08/2015.
  */
-class TweetSink(rabbitMQConfig :Config) extends CamelSink(rabbitMQConfig){
+class TweetSink(rabbitMQConfig :Config) extends JmsCamelSink(rabbitMQConfig){
   override def channel = rabbitMQConfig getConfig "tweet-channel"
 }
 
