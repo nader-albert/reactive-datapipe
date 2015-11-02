@@ -29,6 +29,8 @@ The following modules represnt the main constituents of the Reactive Data Pipe.
 
 ### TO DO List:
 
+### Spark Integration
+
 ### Unit Test Cases
 1. ScalaTest
 2. akka.testkit
