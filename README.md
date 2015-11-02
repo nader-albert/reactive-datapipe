@@ -29,17 +29,21 @@ The following modules represnt the main constituents of the Reactive Data Pipe.
 
 ### TO DO List:
 
-## Introduce Akka-Persistence
+### Unit Test Cases
+1. ScalaTest
+2. akka.testkit
+
+#### Introduce Akka-Persistence
 1. Enable Reliable Messaging Between the different distributed components.
 2. Should be able to re-run the list of events that occured in the past, only from a predefined snapshot 
 
-## Integtrate a NoSQL DB.
+#### Integtrate a NoSQL DB.
 1. To persist accumulative intermediate results during spark job processing.
 2. MongoDB, could be used to store the processed Pills in Json Documents
 3. Rely on a Reactive, asynchronous access to a persistent storage, ReactiveMongo is a good candidate.
 
-## Introduce a DSL like syntax where the whole chain can be programtically described in one line
+#### Introduce a DSL like syntax where the whole chain can be programtically described in one line
 1. ``` TextPipe("bla bla bla").filter(filterFunc: Pill => Boolean).transform(transformFunc : Pill[A] => Pill[B])((implicit evidence: A=>B)).translate().push(destination: Pill => Sink).materialize ``` 
 
-## Introduce Akka Routing strategies
+#### Introduce Akka Routing strategies
 1. Stop relying on trivial random routing logic, similar to the one used in the pipe-transformer module ```processingEngines(jobCounter % processingEngines size) ! ProcessPill(pill) ``` 
