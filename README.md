@@ -27,7 +27,7 @@ The following modules represnt the main constituents of the Reactive Data Pipe.
   1. Acts as the final sink, into which a stream of processed data pills will be caught.
   2. 
 
-### TO DO List
+### TO DO List:
 
 ## Introduce Akka-Persistence
 1. Enable Reliable Messaging Between the different distributed components.
