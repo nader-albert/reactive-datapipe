@@ -44,8 +44,8 @@ The following modules represnt the main constituents of the Reactive Data Pipe.
 2. MongoDB, could be used to store the processed Pills in Json Documents
 3. Rely on a Reactive, asynchronous access to a persistent storage, ReactiveMongo is a good candidate.
 
-#### Introduce a DSL like syntax where the whole chain can be programtically described in one line
-1. ``` TextPipe("bla bla bla").filter(filterFunc: Pill => Boolean).transform(transformFunc : Pill[A] => Pill[B])((implicit evidence: A=>B)).translate().push(destination: Pill => Sink).materialize ``` 
+#### Introduce a DSL like syntax
+1. Introduce a DSL grammar where the whole chain can be programtically described in one line ``` TextPipe("bla bla bla").filter(filterFunc: Pill => Boolean).transform(transformFunc : Pill[A] => Pill[B])((implicit evidence: A=>B)).translate().push(destination: Pill => Sink).materialize ``` 
 
 #### Introduce Akka Routing strategies
 1. Stop relying on trivial random routing logic, similar to the one used in the pipe-transformer module ```processingEngines(jobCounter % processingEngines size) ! ProcessPill(pill) ``` 
