@@ -30,6 +30,8 @@ The following modules represnt the main constituents of the Reactive Data Pipe.
 ### TO DO List:
 
 ### Spark Integration
+1. Real computation and processing will be carried out by spark jobs 
+2. 
 
 ### Unit Test Cases
 1. ScalaTest
