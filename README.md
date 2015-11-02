@@ -1,3 +1,4 @@
+# Features
 The reactive data pipe is a logical channel of continuous data processing, that can dynamically scale up/out and shrink back 
 according to the incoming data influx, and hence react to variations in the incoming load.
 
@@ -10,6 +11,22 @@ Each Sink corresponds to a single destination. Several Sinks could be simultaneo
 Each data element passing through the pipe, is called [Data Pill], and hence the pipe is called a pipe of data pills
 The pipe construction is designed to be lazy, meaning that it doesn't ignited until a Sink is connected to it.
 
+The following modules represnt the main constituents of the Reactive Data Pipe.
+* #### Pipe_Source
+  1. Acts as the source of data for the entire pipe. Can be though of as the driver of the pipe.
+  2.
+
+* #### Pipe_Transformer 
+  1. This is where the content of an incoming Data Pill, gets transformed from one format to another, or one structure to      another. Example: A DataPill[String] gets transformed to DataPill[Tweet], which can then be passed to a successive processing task.
+  
+* #### Pipe_Processor
+  1. This is the place where real processing and data manipulation takes place. 
+  2. Acts as the source of information, extracted from a continous stream that came in
+
+* #### Pipe_Sink
+  1. Acts as the final sink, into which a stream of processed data pills will be caught.
+  2. 
+
 ###TO DO List
 
 ## Introduce Akka-Persistence
@@ -21,5 +38,5 @@ The pipe construction is designed to be lazy, meaning that it doesn't ignited un
 2. MongoDB, could be used to store the processed Pills in Json Documents
 3. Rely on a Reactive, asynchronous access to a persistent storage, ReactiveMongo is a good candidate.
 
-## Rely on well defined Akka Routing strategies
+## Introduce the Akka Routing strategies
 1. Stop relying on trivial random routing logic, similar to the one used in the pipe-transformer module ```processingEngines(jobCounter % processingEngines.size) ! ProcessPill(pill) ``` 
