@@ -1,7 +1,7 @@
 package na.datapipe.source.engine.twitter
 
 import akka.actor.Props
-import na.datapipe.sink.model.Pill
+import na.datapipe.model.Pill
 import na.datapipe.source.engine.PillLoader
 import na.datapipe.transformer.model.Transform
 /**

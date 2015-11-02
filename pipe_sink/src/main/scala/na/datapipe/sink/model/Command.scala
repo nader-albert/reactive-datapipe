@@ -1,5 +1,7 @@
 package na.datapipe.sink.model
 
+import na.datapipe.model.Pill
+
 /**
  * @author nader albert
  * @since  6/08/2015.

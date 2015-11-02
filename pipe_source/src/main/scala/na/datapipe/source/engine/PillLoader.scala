@@ -1,7 +1,7 @@
 package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
-import na.datapipe.sink.model.Pill
+import na.datapipe.model.Pill
 import na.datapipe.source.model.{Load, LineLoaded, TransformerJoined}
 import na.datapipe.transformer.model.{Command, PillTransformed}
 

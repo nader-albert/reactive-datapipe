@@ -1,6 +1,6 @@
 package na.datapipe.source.model
 
-import na.datapipe.sink.model.Pill
+import na.datapipe.model.Pill
 
 /**
  * @author nader albert

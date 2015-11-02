@@ -51,7 +51,7 @@ class ProcessingGuardian extends Actor with ActorLogging {
     // Assuming that spark processing engine sits in its own cluster island, and that we don't have control over it !
     // if we can't locate the spark driver system, for any reason here, we can then degrade the level of processing we
     // provide to a lower level. temporarily until the spark driver cluster comes in again !
-    case processTweet :ProcessPill[Tweet] if sparkPipes isEmpty => log info "empty spark-pipe, will try to resolve another one "
+    case processTweet :ProcessPill[_] if sparkPipes isEmpty => log info "empty spark-pipe, will try to resolve another one "
       context.system.actorSelection(sparkPath) ! Identify("spark") /*resolveOne(10 seconds) onComplete {
         case Success(spark) =>
           sparkPipes = sparkPipes.::(spark) //don't try to look it up next time !
@@ -62,7 +62,7 @@ class ProcessingGuardian extends Actor with ActorLogging {
           println("no available spark pipes at the moment ! downgrading the service and doing trivial computations ")
       }*/
 
-    case processTweet :ProcessPill[Tweet] if sparkPipes nonEmpty => log info "non empty sparkPipe" ; sparkPipes.head forward processTweet //assuming only one spark pipe at the moment.
+    case processTweet :ProcessPill[_] if sparkPipes nonEmpty => log info "non empty sparkPipe" ; sparkPipes.head forward processTweet //assuming only one spark pipe at the moment.
 
     /** Current snapshot state of the cluster. Sent to new subscriber */
     case state: CurrentClusterState => println("current cluster state is: " + "active members are: " + state.members + " unreachable members are: "

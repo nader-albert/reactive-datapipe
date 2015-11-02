@@ -5,10 +5,9 @@ import com.google.gson._
 import com.google.gson.JsonNull
 
 import na.datapipe.processor.model.{ProcessPill, ProcessorJoined}
-import na.datapipe.sink.model.Pill
 import na.datapipe.transformer.DataTransformer
 import na.datapipe.transformer.model.Transform
-import na.datapipe.model.{User, Text, GeographicalLocation, Tweet}
+import na.datapipe.model._
 
 import languageFeature.implicitConversions._
 import scala.util.Random

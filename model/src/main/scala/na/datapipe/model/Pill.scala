@@ -1,4 +1,4 @@
-package na.datapipe.sink.model
+package na.datapipe.model
 
 /**
  * @author nader albert

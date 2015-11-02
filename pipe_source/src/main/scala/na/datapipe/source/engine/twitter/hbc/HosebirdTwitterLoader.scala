@@ -11,7 +11,7 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor
 import com.twitter.hbc.core.{Client, Constants, HttpHosts}
 import com.twitter.hbc.httpclient.auth.OAuth1
 import com.typesafe.config.Config
-import na.datapipe.sink.model.Pill
+import na.datapipe.model.Pill
 import na.datapipe.source.engine.twitter.TweetLoader
 import na.datapipe.source.engine.{StreamLoader, _}
 import na.datapipe.source.model._

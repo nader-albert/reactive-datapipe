@@ -1,7 +1,6 @@
 package na.datapipe.processor.model
 
-import na.datapipe.model.Tweet
-import na.datapipe.sink.model.Pill
+import na.datapipe.model.{Pill, Tweet}
 
 /**
  * @author nader albert

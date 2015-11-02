@@ -1,6 +1,6 @@
 package na.datapipe.sink.producers.spray.model
 
-import na.datapipe.sink.model.Pill
+import na.datapipe.model.Pill
 import spray.http.{HttpMethods, HttpEntity, Uri, HttpMethod}
 
 /**
