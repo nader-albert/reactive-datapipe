@@ -9,3 +9,17 @@ Each Sink corresponds to a single destination. Several Sinks could be simultaneo
 
 Each data element passing through the pipe, is called [Data Pill], and hence the pipe is called a pipe of data pills
 The pipe construction is designed to be lazy, meaning that it doesn't ignited until a Sink is connected to it.
+
+###TO DO List
+
+## Introduce Akka-Persistence
+1. Enable Reliable Messaging Between the different distributed components.
+2. Should be able to re-run the list of events that occured in the past, only from a predefined snapshot 
+
+## Integtrate with a NoSQL DB.
+1. To persist accumulative intermediate results during spark job processing.
+2. MongoDB, could be used to store the processed Pills in Json Documents
+3. Rely on a Reactive, asynchronous access to a persistent storage, ReactiveMongo is a good candidate.
+
+## Rely on well defined Akka Routing strategies
+1. Stop relying on trivial random routing logic, similar to the one used in the pipe-transformer module ```processingEngines(jobCounter % processingEngines.size) ! ProcessPill(pill) ``` 
