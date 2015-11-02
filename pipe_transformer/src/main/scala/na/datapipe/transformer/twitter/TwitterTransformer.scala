@@ -1,19 +1,15 @@
 package na.datapipe.transformer.twitter
 
 import akka.actor.{Terminated, ActorRef, Props}
-import akka.cluster.{Member, MemberStatus, Cluster}
-import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import com.google.gson._
 import com.google.gson.JsonNull
 
-import na.datapipe.processor.model.{ProcessorJoined, Process}
+import na.datapipe.processor.model.{ProcessPill, ProcessorJoined}
 import na.datapipe.sink.model.Pill
 import na.datapipe.transformer.DataTransformer
 import na.datapipe.transformer.model.Transform
 import na.datapipe.model.{User, Text, GeographicalLocation, Tweet}
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import languageFeature.implicitConversions._
 import scala.util.Random
 
@@ -60,7 +56,7 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
 
       jobCounter += 1
 
-      processingEngines(jobCounter % processingEngines.size) ! Process(pill)
+      processingEngines(jobCounter % processingEngines.size) ! ProcessPill(pill)
 
       println("tweet transformed and sent to processor")
 

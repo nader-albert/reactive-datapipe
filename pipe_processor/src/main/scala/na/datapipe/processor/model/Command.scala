@@ -9,4 +9,4 @@ import na.datapipe.sink.model.Pill
  */
 trait Command
 
-case class Process(pill :Pill[Tweet])
+case class ProcessPill[T](pill :Pill[T]) extends Command

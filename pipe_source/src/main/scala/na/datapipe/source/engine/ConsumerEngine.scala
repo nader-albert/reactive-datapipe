@@ -19,9 +19,9 @@ object ConsumerEngine extends App {
 
   val applicationConfig: Config = config getConfig "loader_app"
 
-  val transformersConfig = applicationConfig getConfig "transformers"
+  //val transformersConfig = applicationConfig getConfig "transformers"
 
-  val loader = system.actorOf(LoadingGuardian.props(applicationConfig), name = "loader-guardian")
+  val loader = system.actorOf(LoadingGuardian.props(applicationConfig), name = "source-guardian")
 
   /*var x =0
   do {

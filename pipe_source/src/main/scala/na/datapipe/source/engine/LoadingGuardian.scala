@@ -21,7 +21,7 @@ class LoadingGuardian(loadingConfig :Config) extends Actor{
   var t2 = 0.0
 
   val sourcesConfig = loadingConfig.getConfig("sources")
-  val transformersConfig = loadingConfig.getConfig("transformers")
+//  val transformersConfig = loadingConfig.getConfig("transformers")
 
   var openDataSources = new HashMap[DataSource, ActorRef]
 
@@ -61,7 +61,7 @@ class LoadingGuardian(loadingConfig :Config) extends Actor{
       try {
         val twitterConfig = sourcesConfig getConfig "twitters" getConfig twitterSourceName
 
-        val twitterLoader = context.actorOf(HosebirdTwitterLoader.props(twitterConfig, transformersConfig),
+        val twitterLoader = context.actorOf(HosebirdTwitterLoader.props(twitterConfig),
           "twitter-loader" + Random.nextInt(100))
 
         println("start twitter load command received !")

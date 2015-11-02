@@ -26,5 +26,5 @@ Seq(
   "org.apache.camel"    % "camel-rabbitmq"  % "2.15.2",
   "io.reactivex"        %%  "rxscala"        % "0.24.1",
   "org.scalatest"       %%  "scalatest"      % "2.2.4" % "test",
-  "com.wandoulabs.akka" %%  "spray-websocket" % "0.1.3")}
-
+  "com.wandoulabs.akka" %%  "spray-websocket" % "0.1.3")
+}

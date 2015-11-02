@@ -28,7 +28,7 @@ import scala.util.{Failure, Success}
  * @since  3/08/2015.
  */
 
-class HosebirdTwitterLoader(twitterConfig :Config, transformersHost: String, transformersPort: String) extends StreamLoader {
+class HosebirdTwitterLoader(twitterConfig :Config /*, transformersHost: String, transformersPort: String*/) extends StreamLoader {
 
   private var client: Client = null
 
@@ -75,7 +75,7 @@ class HosebirdTwitterLoader(twitterConfig :Config, transformersHost: String, tra
    * describes the mechanism of consuming from that specific source
    *  */
   def consume(source: DataSource) = {
-    val tweetLoader = context.actorOf(TweetLoader props(transformersHost, transformersPort), "tweet-loader" + nextInt)
+    val tweetLoader = context.actorOf(TweetLoader props(/*transformersHost, transformersPort*/), "tweet-loader" + nextInt)
 
     Future {
       while (connected) {
@@ -115,11 +115,11 @@ class HosebirdTwitterLoader(twitterConfig :Config, transformersHost: String, tra
 case class TwitterFilter(tracks :List[String], locations :List[LocationDto])
 
 object HosebirdTwitterLoader {
-  def props(twitterConfig :Config, transformersConfig :Config) = {
-    val transformersHost = transformersConfig.getString("transformers_host")
-    val transformersPort = transformersConfig.getString("transformers_port")
+  def props(twitterConfig :Config/*, transformersConfig :Config*/) = {
+  //  val transformersHost = transformersConfig.getString("transformers_host")
+ //   val transformersPort = transformersConfig.getString("transformers_port")
 
-    Props(classOf[HosebirdTwitterLoader], twitterConfig, transformersHost, transformersPort)
+    Props(classOf[HosebirdTwitterLoader], twitterConfig/*, transformersHost, transformersPort*/)
   }
 
   import scala.languageFeature.implicitConversions._

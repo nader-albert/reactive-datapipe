@@ -3,7 +3,9 @@ package na.datapipe.processor
 import akka.actor._
 import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
-import na.datapipe.processor.model.ProcessorRegistration
+import akka.event.LoggingReceive
+import na.datapipe.model.Tweet
+import na.datapipe.processor.model.{ProcessPill, ProcessorRegistration}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -11,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * @author nader albert
  * @since  15/10/2015.
  */
-class ProcessingGuardian extends Actor{
+class ProcessingGuardian extends Actor with ActorLogging {
 
   var sparkPipes: Set[ActorRef] = Set.empty
 
@@ -33,34 +35,34 @@ class ProcessingGuardian extends Actor{
   }
   override def postStop(): Unit = cluster.unsubscribe(self)
 
-  override def receive: Receive = {
+  override def receive: Receive = LoggingReceive {
     //locate the sparkDriver processor actor here and forward this message to it so that it can store the tweet
     case ActorIdentity(resolvedActor, refOption) if resolvedActor == "spark" && refOption.isDefined =>
-      println("spark pipe resolved successfully ! " + refOption.get)
+      log info "spark pipe resolved successfully ! " + refOption.get
       context watch refOption.get
       sparkPipes = sparkPipes + refOption.get //since we could have different futures trying to identify the spark pipe at the same time
       // we may end up having many of them identified here but the enclosing data structure is a set,
       // an identified sparkPipe will not be duplicated.
 
     case ActorIdentity(resolvedActor, refOption) if resolvedActor == "transformer" && refOption.isDefined =>
-      println("transformer guardian resolved successfully ! " + refOption.get)
+      log info "transformer guardian resolved successfully ! " + refOption.get
       refOption.get ! ProcessorRegistration
 
     // Assuming that spark processing engine sits in its own cluster island, and that we don't have control over it !
     // if we can't locate the spark driver system, for any reason here, we can then degrade the level of processing we
     // provide to a lower level. temporarily until the spark driver cluster comes in again !
-    case processTweet :Process if sparkPipes.isEmpty => println("empty sparkpipe, will try to resolve another one ")
+    case processTweet :ProcessPill[Tweet] if sparkPipes isEmpty => log info "empty spark-pipe, will try to resolve another one "
       context.system.actorSelection(sparkPath) ! Identify("spark") /*resolveOne(10 seconds) onComplete {
         case Success(spark) =>
           sparkPipes = sparkPipes.::(spark) //don't try to look it up next time !
           spark forward processTweet
           println("sparkPipe size now has become " + sparkPipes.size)
         case Failure(failure) =>
-          // TODO: Trivial type of processing that doesn't require spark. can be considered as the minimum level of service
+          //TODO: Trivial type of processing that doesn't require spark. can be considered as the minimum level of service
           println("no available spark pipes at the moment ! downgrading the service and doing trivial computations ")
       }*/
 
-    case processTweet :Process if sparkPipes nonEmpty => sparkPipes.head forward processTweet //assuming only one spark pipe at the moment.
+    case processTweet :ProcessPill[Tweet] if sparkPipes nonEmpty => log info "non empty sparkPipe" ; sparkPipes.head forward processTweet //assuming only one spark pipe at the moment.
 
     /** Current snapshot state of the cluster. Sent to new subscriber */
     case state: CurrentClusterState => println("current cluster state is: " + "active members are: " + state.members + " unreachable members are: "
@@ -72,9 +74,9 @@ class ProcessingGuardian extends Actor{
     case MemberUp(m) => println("member: " + m + "is now up")
       register(m)
 
-    case Terminated(a) => println ("spark pipe disconnected !")
+    case Terminated(a) => log info "spark pipe disconnected !"
       sparkPipes = sparkPipes.filterNot(_ == a)
-      println("spark pipe is now empty with size = " + sparkPipes.size)
+      log debug "spark pipe is now empty with size = " + sparkPipes.size
   }
 
   /**
@@ -82,7 +84,7 @@ class ProcessingGuardian extends Actor{
    * allow us to receive messages from transformers
    * */
   def register(member: Member): Unit = {
-    if (member.hasRole("transformer"))
+    if (member.hasRole("pipe_transformer"))
       context.actorSelection(RootActorPath(member.address) / "user" / "transformer-guardian") ! Identify("transformer")
 
     println(member.roles)

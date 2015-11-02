@@ -76,9 +76,9 @@ trait PillLoader extends Actor {
       transformers = transformers.filterNot(_ == a)
   }
 
-  val host :String
+  //val host :String
 
-  val port :String
+  //val port :String
 
   val transformCommand: (Pill[String],Int) => Command
 }
