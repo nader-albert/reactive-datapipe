@@ -1,4 +1,4 @@
-name := "pipe_processor"
+name := "pipe_source"
 
 version := "1.0"
 
@@ -13,15 +13,10 @@ val sprayV = "1.2.0"
 
 libraryDependencies ++= {
 Seq(
-  "io.spray"            %%  "spray-json"      % "1.3.2",
-  "io.spray"            %%  "spray-can"       % "1.3.3",
-  "io.spray"            %%  "spray-routing"   % "1.3.3",
-  "io.reactivex"        %%  "rxscala"         % "0.24.1",
+  "io.reactivex"        %%  "rxscala"        % "0.24.1",
   "com.wandoulabs.akka" %%  "spray-websocket" % "0.1.3",
   "com.typesafe.akka"   %%  "akka-actor"      % akkaV,
   "com.typesafe.akka"   %%  "akka-cluster"    % akkaV,
   "com.typesafe.akka"   %%  "akka-testkit"    % akkaV   % "test",
-  "com.typesafe.akka"   %% "akka-testkit"     % akkaV,
-  "com.typesafe.akka"   %% "akka-persistence-experimental" % akkaV,
-  "org.scalatest"       %%  "scalatest"       % "2.2.4" % "test")
+  "org.scalatest"       %%  "scalatest"      % "2.2.4" % "test") //double % means get me the source files suffixed with the correct scala version
 }

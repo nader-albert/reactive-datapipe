@@ -61,7 +61,7 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
 
     //sparkProcessor ! ProcessTweet(text)
 
-      //TODO: The two cases below should be moved to the parent DataTransformer
+    //TODO: The two cases below should be moved to the parent DataTransformer
     case ProcessorJoined if !processingEngines.contains(sender) =>
       println ("Twitter Transformer: -> a new processor added to the list !" )
       context watch sender

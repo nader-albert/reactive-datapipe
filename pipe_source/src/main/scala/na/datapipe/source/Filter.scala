@@ -5,5 +5,5 @@ package na.datapipe.source
  * @since  19/10/2015.
  */
 trait Filter {
-  def filter(): Pipe = ???
+  def filter(/*func: String => Int*/): Pipe = ???
 }

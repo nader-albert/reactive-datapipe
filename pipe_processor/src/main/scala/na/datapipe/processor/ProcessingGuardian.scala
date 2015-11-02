@@ -4,7 +4,6 @@ import akka.actor._
 import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import akka.event.LoggingReceive
-import na.datapipe.model.Tweet
 import na.datapipe.processor.model.{ProcessPill, ProcessorRegistration}
 
 import scala.concurrent.ExecutionContext.Implicits.global
