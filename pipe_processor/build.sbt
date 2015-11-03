@@ -17,11 +17,14 @@ Seq(
   "io.spray"            %%  "spray-can"       % "1.3.3",
   "io.spray"            %%  "spray-routing"   % "1.3.3",
   "io.reactivex"        %%  "rxscala"         % "0.24.1",
+  "org.reactivemongo"   %% "reactivemongo" % "0.11.7",
   "com.wandoulabs.akka" %%  "spray-websocket" % "0.1.3",
+  "org.apache.spark"    %%  "spark-core"      % "1.5.0",
+  "org.apache.spark"    %%  "spark-streaming" % "1.5.0",
   "com.typesafe.akka"   %%  "akka-actor"      % akkaV,
   "com.typesafe.akka"   %%  "akka-cluster"    % akkaV,
   "com.typesafe.akka"   %%  "akka-testkit"    % akkaV   % "test",
-  "com.typesafe.akka"   %% "akka-testkit"     % akkaV,
-  "com.typesafe.akka"   %% "akka-persistence-experimental" % akkaV,
+  "com.typesafe.akka"   %%  "akka-testkit"    % akkaV,
+  "com.typesafe.akka"   %%  "akka-persistence-experimental" % akkaV,
   "org.scalatest"       %%  "scalatest"       % "2.2.4" % "test")
 }

@@ -5,6 +5,7 @@ import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import akka.event.LoggingReceive
 import na.datapipe.processor.model.{ProcessPill, ProcessorRegistration}
+import na.datapipe.spark.SparkEngine
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -17,7 +18,9 @@ class ProcessingGuardian extends Actor with ActorLogging {
   var sparkPipes: Set[ActorRef] = Set.empty
 
   val cluster: Cluster = Cluster(context.system)
+
   val sparkPath = "akka.tcp://sparkDriver@127.0.0.1:7777/user/Supervisor0/spark-pipe"
+  val sinkPath = "akka.tcp://sinks@127.0.0.1:3000/user/Supervisor0/sink"
 
   import scala.concurrent.duration._
   val timeout = 20 seconds
@@ -29,10 +32,17 @@ class ProcessingGuardian extends Actor with ActorLogging {
 
     context.system.actorSelection(sparkPath) ! Identify("spark")
 
+    context.system.actorSelection(sparkPath) ! Identify("sink")
+
+    SparkEngine.run //Trigger the spark engine now
     /*cluster joinSeedNodes List(Address("akka.tcp", "ClusterSystem", "127.0.0.1" , 2551),
       Address("akka.tcp", "ClusterSystem", "127.0.0.1" , 2552))*/
   }
-  override def postStop(): Unit = cluster.unsubscribe(self)
+  override def postStop(): Unit = {
+    cluster.unsubscribe(self)
+    SparkEngine.stop  //Will be started again, once this actor is restarted..
+    // Is there a probability to miss some data by stopping the spark engine in the middle like this ?
+  }
 
   override def receive: Receive = LoggingReceive {
     //locate the sparkDriver processor actor here and forward this message to it so that it can store the tweet
@@ -47,10 +57,15 @@ class ProcessingGuardian extends Actor with ActorLogging {
       log info "transformer guardian resolved successfully ! " + refOption.get
       refOption.get ! ProcessorRegistration
 
+    case ActorIdentity(resolvedActor, refOption) if resolvedActor == "sink" && refOption.isDefined =>
+      log info "sink guardian resolved successfully ! " + refOption.get
+      context watch refOption.get
+      SparkEngine.addSink(refOption.get) //starts the spark engine, only when there is at least one sink available
+
     // Assuming that spark processing engine sits in its own cluster island, and that we don't have control over it !
     // if we can't locate the spark driver system, for any reason here, we can then degrade the level of processing we
     // provide to a lower level. temporarily until the spark driver cluster comes in again !
-    case processTweet :ProcessPill[_] if sparkPipes isEmpty => log info "empty spark-pipe, will try to resolve another one "
+    case processPill :ProcessPill if sparkPipes isEmpty => log info "empty spark-pipe, will try to resolve another one "
       context.system.actorSelection(sparkPath) ! Identify("spark") /*resolveOne(10 seconds) onComplete {
         case Success(spark) =>
           sparkPipes = sparkPipes.::(spark) //don't try to look it up next time !
@@ -61,7 +76,8 @@ class ProcessingGuardian extends Actor with ActorLogging {
           println("no available spark pipes at the moment ! downgrading the service and doing trivial computations ")
       }*/
 
-    case processTweet :ProcessPill[_] if sparkPipes nonEmpty => log info "non empty sparkPipe" ; sparkPipes.head forward processTweet //assuming only one spark pipe at the moment.
+    case processPill :ProcessPill if sparkPipes nonEmpty => log info "non empty sparkPipe"
+      sparkPipes.head forward processPill //assuming only one spark pipe at the moment.
 
     /** Current snapshot state of the cluster. Sent to new subscriber */
     case state: CurrentClusterState => println("current cluster state is: " + "active members are: " + state.members + " unreachable members are: "
@@ -73,7 +89,7 @@ class ProcessingGuardian extends Actor with ActorLogging {
     case MemberUp(m) => println("member: " + m + "is now up")
       register(m)
 
-    case Terminated(a) => log info "spark pipe disconnected !"
+    case Terminated(a) => log info "spark pipe disconnected !" //TODO: check if this is a spark pipe or a sink that has been terminated
       sparkPipes = sparkPipes.filterNot(_ == a)
       log debug "spark pipe is now empty with size = " + sparkPipes.size
   }
