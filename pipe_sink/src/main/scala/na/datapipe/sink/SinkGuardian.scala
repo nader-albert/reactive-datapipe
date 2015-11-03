@@ -4,7 +4,7 @@ import akka.actor.{Props, Actor}
 import akka.camel.CamelMessage
 
 import com.typesafe.config.Config
-import na.datapipe.model.Pill
+import na.datapipe.model.{TextPill, Pill}
 import na.datapipe.sink.model.Swallow
 import na.datapipe.sink.producers.camel.jms.TweetSink
 import na.datapipe.sink.producers.spray.HttpSink
@@ -19,15 +19,12 @@ class SinkGuardian(sinkConfig :Config) extends Actor {
 
   val rabbitMQConfig = sinkConfig getConfig "destinations" getConfig "jms" getConfig "rabbit"
 
-  /*val camelSink = context.actorOf(CamelSink.props(rabbitMQConfig),
-    name = "processed-post-publisher") */
-
   val camelSink = context.actorOf(TweetSink.props(rabbitMQConfig), name = "tweet-sink")
 
   val httpSink = context.actorOf(HttpSink.props, name = "http-sink")
 
   override def receive: Receive = {
-    case swallow :Swallow if swallow.channel.name == "camel" =>
+    case swallow :Swallow[String] if swallow.channel.name.startsWith("camel") =>
       println("publishing raw post to transform jms queue")
 
       import spray.json._
@@ -37,7 +34,8 @@ class SinkGuardian(sinkConfig :Config) extends Actor {
       //TODO: discern the right publisher to send this message to
       camelSink ! CamelMessage(swallow.pill.toJson.toString, Map())
 
-    case swallow :Swallow if swallow.channel.name == "http" => httpSink forward swallow //TODO: get it from the Pill header instead
+    case swallow :Swallow[String] if swallow.channel.name.startsWith("http") => httpSink forward swallow
+    //TODO: get it from the Pill header instead
   }
 }
 
@@ -46,13 +44,13 @@ object SinkGuardian {
 
   import scala.language.implicitConversions
 
-  implicit val pillWriter: JsonWriter[Pill[String]] = JsonWriter.func2Writer(toJSON)
+  implicit val pillWriter: JsonWriter[Pill] = JsonWriter.func2Writer(toJSON)
 
   /**
    * much better to write your own JSON parser so as to avoid reflection that would otherwise be utilized to, in case we
    * resort to an out of the box JSON Parser
    * */
-  def toJSON(post: Pill[String]) :JsValue = //TODO provide a suitable transformation here for Pill
+  def toJSON(post: Pill) :JsValue = //TODO provide a suitable transformation here for Pill
     JsObject(Map.empty[String, JsValue] updated ("conversation_id", JsString("post.getConversation_id"))) //post.getConversation_id)))
 }
 

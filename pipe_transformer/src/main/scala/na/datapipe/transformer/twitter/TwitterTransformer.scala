@@ -39,7 +39,7 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
     case transformTweet :Transform if processingEngines.isEmpty => println ("no available processors !")
 
     case Transform(pill, id) =>
-      val text = pill.content
+      val text = pill.body
 
       println (s"transforming ... $text ")
       /**
@@ -86,7 +86,7 @@ object TwitterTransformer {
     parser.parse(source).asInstanceOf[JsonObject]
   }
 
-  implicit def toTweet(source: Pill[String]): Pill[Tweet] = convert(source.content)
+  implicit def toTweetPill(source: TextPill): TweetPill = convert(source.body)
 
   implicit def toBoolean (jsonElement: JsonElement): Boolean = jsonElement.getAsBoolean
 
@@ -129,11 +129,11 @@ object TwitterTransformer {
       if(null == json || null == json.get("followers_count") || json.isJsonNull) 0 else json.get("followers_count"),
       if(null == json || null == json.get("friends_count") || json.isJsonNull) 0 else json.get("friends_count"))
 
-  implicit def toTweetPill(json: JsonObject): Pill[Tweet] = {
+  implicit def toTweetPill(json: JsonObject): TweetPill = {
     val tweet = Tweet(json.get("id"), json.getAsJsonObject("user"), if (json.get("geo") == null || json.get("geo").isInstanceOf[JsonNull]) None else Some(json.getAsJsonObject("geo")),
       toText(json.get("text"), json.get("lang")), json.get("retweeted"), None
       /*json.getAsJsonObject("retweeted_status")*/ , json.get("entities"))
 
-    Pill(tweet, Some(Map.empty[String,Any].updated("source", "twitter")), Random.nextInt(10000))
+    TweetPill(tweet, Some(Map.empty[String,Any].updated("source", "twitter")), Random.nextInt(10000))
   }
 }

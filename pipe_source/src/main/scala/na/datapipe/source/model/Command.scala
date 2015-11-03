@@ -1,6 +1,6 @@
 package na.datapipe.source.model
 
-import na.datapipe.model.Pill
+import na.datapipe.model.{TextPill, Pill}
 
 /**
  * @author nader albert
@@ -16,7 +16,7 @@ trait Command
  * An Event message is something that has just happened. You are notifying of the event that has just happened.
  * */
 
-case class Load(pill :Pill[String], id :Int)
+case class Load(pill :TextPill, id :Int)
 
 case class ConnectToSource(source: DataSource) extends Command
 case class ConsumeFromSource(source: DataSource) extends Command

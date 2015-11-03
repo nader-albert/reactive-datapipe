@@ -1,7 +1,7 @@
 package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
-import na.datapipe.model.Pill
+import na.datapipe.model.{TextPill, Pill}
 import na.datapipe.source.model.{Load, LineLoaded, TransformerJoined}
 import na.datapipe.transformer.model.{Command, PillTransformed}
 
@@ -44,7 +44,7 @@ trait PillLoader extends Actor {
        * */
        jobCounter += 1
 
-       val text = pill.content
+       val text = pill.body
 
        println(s"loading.... $text")
 
@@ -80,5 +80,5 @@ trait PillLoader extends Actor {
 
   //val port :String
 
-  val transformCommand: (Pill[String],Int) => Command
+  val transformCommand: (TextPill,Int) => Command
 }

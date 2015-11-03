@@ -76,5 +76,4 @@ object TestApp extends App {
   textPipe2 onComplete {
     case Success(result) => println(result)
   }
-
 }

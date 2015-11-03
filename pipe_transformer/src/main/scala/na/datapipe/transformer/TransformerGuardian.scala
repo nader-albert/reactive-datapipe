@@ -1,11 +1,10 @@
 package na.datapipe.transformer
 
-import akka.actor.SupervisorStrategy.{Resume, Restart, Stop}
+import akka.actor.SupervisorStrategy.{Resume, Stop}
 import akka.actor._
 import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import na.datapipe.processor.model.{ProcessorJoined, ProcessorRegistration}
-import na.datapipe.transformer.facebook.FacebookTransformer
 import na.datapipe.transformer.model.{TransformerRegistration, Transform, KillChildren}
 import na.datapipe.transformer.twitter.TwitterTransformer
 
@@ -55,7 +54,7 @@ class TransformerGuardian(analyzersSystemHost: String, analyzersSystemPort:Strin
     //case Transformed(id) => senders.get(id).get ! Transformed()
     case KillChildren => context.children.foreach(_ ! PoisonPill)
 
-    case Transform(pill, id) if pill.headers.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == "twitter")) =>
+    case Transform(pill, id) if pill.header.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == "twitter")) =>
       println ("twitter pill received... passing to the relevant transformer.... ")
       twitterTransformer forward Transform(pill, id)
 

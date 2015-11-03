@@ -1,7 +1,7 @@
 package na.datapipe.source.engine.twitter
 
 import akka.actor.Props
-import na.datapipe.model.Pill
+import na.datapipe.model.{TextPill, Pill}
 import na.datapipe.source.engine.PillLoader
 import na.datapipe.transformer.model.Transform
 /**
@@ -12,7 +12,7 @@ class TweetLoader /*(transformersHost: String, transformersPort: String)*/ exten
   //override val host = transformersHost
   //override val port = transformersPort
 
-  override val transformCommand = (tweetPill :Pill[String], id :Int) => Transform(tweetPill, id)
+  override val transformCommand = (tweetPill :TextPill, id :Int) => Transform(tweetPill, id)
 }
 
 object TweetLoader {

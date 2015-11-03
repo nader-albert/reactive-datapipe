@@ -1,6 +1,6 @@
 package na.datapipe.transformer.model
 
-import na.datapipe.model.Pill
+import na.datapipe.model.{TextPill, Pill}
 
 /**
  * @author nader albert
@@ -15,6 +15,6 @@ trait Command
 
 //case class TransformTweet(text :String, id: Int) extends TransformElement
 
-case class Transform(dataPill :Pill[String], id: Int) extends Command
+case class Transform(dataPill :TextPill, id: Int) extends Command
 
 case object KillChildren extends Command

@@ -9,7 +9,7 @@ import akka.io.IO
 import akka.util.Timeout
 import akka.pattern.ask
 import akka.cluster.{Member, MemberStatus}
-import akka.actor.{RootActorPath, Props, Actor}
+import akka.actor.{ActorLogging, RootActorPath, Props, Actor}
 import akka.cluster.ClusterEvent.{MemberUp, CurrentClusterState}
 
 import spray.can.Http
@@ -22,7 +22,7 @@ import na.datapipe.sink.model.{SinkRegistration, Swallow}
  * @author nader albert
  * @since  28/09/2015.
  */
-class HttpSink extends Actor {
+class HttpSink extends Actor with ActorLogging{
 
   import context.system
 
@@ -30,35 +30,42 @@ class HttpSink extends Actor {
   import ExecutionContext.Implicits.global
 
   override def receive: Receive = {
-    case Swallow (_ , httpPill :HttpPill) =>
 
-    // this is a bit tricky... if sender is called directly from inside the onComplete block,
-    // it will be referring to the dead letters actor.. take care :) !
-    val caller = sender
+    case swallow: Swallow[_] =>
+      swallow.pill match {
+        case httpPill: HttpPill if swallow.channel.name == "http/firebase" =>
 
-      if (httpPill.method.isEmpty || httpPill.url.isEmpty)
-        println("request rejected !" + "can't swallow an http pill that hasn't got a method or a url ")
-      else {
-        (IO(Http) ? HttpRequest(httpPill.method.get,httpPill.url.get, Nil, httpPill.body))
-          .mapTo[HttpResponse]
-          .onComplete {
-            case Success(response: HttpResponse) => {
-              println {
-                " [status] => " + response.status +
-                " [headers] => " + response.headers.foreach(println) +
-                " [body] => " + response.entity.data.asString }
-              caller ! response
+          //(httpPill :HttpPill, channel) if channel.name == "http/firebase" =>
+
+          // This is a bit tricky... if sender is called directly from inside the onComplete block, it will be referring to
+          // the dead letters actor.. take care :) !
+          val caller = sender
+
+          if (httpPill.httpMethod.isEmpty || httpPill.httpUrl.isEmpty)
+            log info "request rejected !" + "can't swallow an http pill that hasn't got a method or a url "
+          else {
+            (IO(Http) ? HttpRequest(httpPill.httpMethod.get, httpPill.httpUrl.get, Nil, httpPill.body))
+              .mapTo[HttpResponse]
+              .onComplete {
+              case Success(response: HttpResponse) => {
+                log debug
+                  " [status] => " + response.status +
+                  " [headers] => " + response.headers.foreach(println) +
+                  " [body] => " + response.entity.data.asString
+
+                caller ! response
+              }
+              case Failure(exception) => log error (exception getMessage)
             }
-            case Failure(exception) => println(exception getMessage)
           }
       }
 
     case state: CurrentClusterState =>
-      println("state: " + state)
+      log debug ("state: " + state)
       state.members.filter(_.status == MemberStatus.Up) foreach register
 
     case MemberUp(m) =>
-      println ("member up message")
+      log debug "member up message"
       register(m)
   }
 
