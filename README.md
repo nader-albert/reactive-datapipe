@@ -10,8 +10,8 @@ Each Sink corresponds to a single destination. Several Sinks could be simultaneo
 
 Data Processing is carried out by a set of Spark jobs, integrated with the Processing Engine (pipe-processor)
 
-Each data element passing through the pipe, is called [Data Pill], and hence the pipe is called a pipe of data pills
-The pipe construction is designed to be lazy, meaning that it doesn't ignited until a Sink is connected to it.
+Each data element passing through the pipe, is called [Data Pill], and the pipe is meant to be a pipe of data pills.
+The pipe construction is designed to be lazy, in the sense that it doesn't get ignited, until a Sink is connected to it.
 
 The following modules represnt the main constituents of the Reactive Data Pipe.
 * #### Pipe_Source
