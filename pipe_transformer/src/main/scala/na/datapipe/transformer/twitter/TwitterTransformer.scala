@@ -4,7 +4,7 @@ import akka.actor.{Terminated, ActorRef, Props}
 import com.google.gson._
 import com.google.gson.JsonNull
 
-import na.datapipe.processor.model.{ProcessPill, ProcessorJoined}
+import na.datapipe.process.model.{ProcessPill, ProcessorJoined}
 import na.datapipe.transformer.DataTransformer
 import na.datapipe.transformer.model.Transform
 import na.datapipe.model._
@@ -41,7 +41,7 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
     case Transform(pill, id) =>
       val text = pill.body
 
-      println (s"transforming ... $text ")
+      log info (s"transforming ... $text ")
       /**
        * send the transformed post directly to the publisher, so that it can be passed to the
        * relevant listeners as is, without any further processing */
@@ -57,20 +57,20 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
 
       processingEngines(jobCounter % processingEngines.size) ! ProcessPill(pill)
 
-      println("tweet transformed and sent to processor")
+      log info "tweet transformed and sent to processor"
 
     //sparkProcessor ! ProcessTweet(text)
 
     //TODO: The two cases below should be moved to the parent DataTransformer
     case ProcessorJoined if !processingEngines.contains(sender) =>
-      println ("Twitter Transformer: -> a new processor added to the list !" )
+      log debug "Twitter Transformer: -> a new processor added to the list !"
       context watch sender
       processingEngines = processingEngines :+ sender
 
       println("number of processors is now: " + processingEngines.size)
 
     case Terminated(a) =>
-      println("one prcoessor has left cluster ! " + "[ " + a + " ]")
+      println("one processor has left cluster ! " + "[ " + a + " ]")
       processingEngines = processingEngines.filterNot(_ == a)
   }
 }

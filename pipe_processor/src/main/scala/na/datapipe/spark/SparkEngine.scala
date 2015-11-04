@@ -3,7 +3,7 @@ package na.datapipe.spark
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import na.datapipe.model.Tweet
+import na.datapipe.model.{TweetPill, Tweet}
 import na.datapipe.sink.model.{Channel, Swallow}
 import na.datapipe.sink.producers.spray.model.{HttpHeaders, HttpPill}
 
@@ -28,7 +28,7 @@ object SparkEngine {
   val driverPort = 7777
   val driverHost = "127.0.0.1"
   val conf = new SparkConf(false) // skip loading external settings
-    .setMaster("local[*]") // run locally with enough threads
+    .setMaster("local[2]") // run locally with 2 threads
     .setAppName("Spark Streaming with Scala and Akka") // name in Spark web UI
     .set("spark.logConf", "false")
     .set("spark.driver.port", s"$driverPort")
@@ -39,7 +39,7 @@ object SparkEngine {
 
   val actorName = "spark-pipe"
 
-  val actorStream: ReceiverInputDStream[Tweet] = ssc.actorStream[Tweet](Props[SparkPipe], actorName)
+  var actorStream: ReceiverInputDStream[TweetPill] = null
 
   var sinks : Set[ActorRef] = Set.empty
 
@@ -49,13 +49,14 @@ object SparkEngine {
   def removeSink(sink :ActorRef) =
     sinks = sinks - sink
 
-  def stop = actorStream stop
+ // def stop = actorStream stop
 
   def run = {
 
+    actorStream = ssc.actorStream[TweetPill](Props[SparkPipe], actorName)
+
     // Configuration for a Spark application.
     // Used to set various Spark parameters as key-value pairs.
-
 
     // describe the computation on the input stream as a series of higher-level transformations
 
@@ -92,38 +93,38 @@ object SparkEngine {
         +"}" + "}"
   )))*/
 
-    actorStream
-      .filter(tweet =>
-      tweet.text.content.contains("Sydney")
-        || tweet.text.content.contains("Brisbane")
-        || tweet.text.content.contains("Hobart")
-        || tweet.text.content.contains("Melbourne")
-        || tweet.text.content.contains("Adelaide")
-        || tweet.text.content.contains("Cairns")
-        || tweet.text.content.contains("Perth")
-        || tweet.text.content.contains("Alice Springs")
-        || tweet.text.content.contains("New Castle")
-        || tweet.text.content.contains("the"))
-      .map(tweet =>
-      if (tweet.text.content.contains("Sydney"))
+    actorStream //TODO: check if the below filter/ map transformations are being combined internally to achieve a single iteration ?!
+      .filter(pill => pill.body.text.content.contains("Sydney")
+      || pill.body.text.content.contains("Brisbane")
+      || pill.body.text.content.contains("Hobart")
+      || pill.body.text.content.contains("Melbourne")
+      || pill.body.text.content.contains("Adelaide")
+      || pill.body.text.content.contains("Cairns")
+      || pill.body.text.content.contains("Perth")
+      || pill.body.text.content.contains("Alice Springs")
+      || pill.body.text.content.contains("New Castle")
+      || pill.body.text.content.contains("the"))
+
+      .map(pill =>
+      if (pill.body.text.content.contains("Sydney"))
         ("SYDNEY", 1)
-      else if (tweet.text.content.contains("Brisbane"))
+      else if (pill.body.text.content.contains("Brisbane"))
         ("BISBANE", 1)
-      else if (tweet.text.content.contains("Hobart"))
+      else if (pill.body.text.content.contains("Hobart"))
         ("HOBART", 1)
-      else if (tweet.text.content.contains("Melbourne"))
+      else if (pill.body.text.content.contains("Melbourne"))
         ("MELBOURNE", 1)
-      else if (tweet.text.content.contains("Adelaide"))
+      else if (pill.body.text.content.contains("Adelaide"))
         ("ADELAIDE", 1)
-      else if (tweet.text.content.contains("Cairns"))
+      else if (pill.body.text.content.contains("Cairns"))
         ("CAIRNS", 1)
-      else if (tweet.text.content.contains("Perth"))
+      else if (pill.body.text.content.contains("Perth"))
         ("PERTH", 1)
-      else if (tweet.text.content.contains("Alice Springs"))
+      else if (pill.body.text.content.contains("Alice Springs"))
         ("ALICE SPRINGS", 1)
-      else if (tweet.text.content.contains("New Castle"))
+      else if (pill.body.text.content.contains("New Castle"))
         ("NEW CASTLE", 1)
-      else if (tweet.text.content.contains("the"))
+      else if (pill.body.text.content.contains("the"))
         ("THE", 1)
       else
         ("ERROR", 1))
@@ -133,8 +134,9 @@ object SparkEngine {
         implicit val actorAskTimeout = new Timeout(10 seconds)
         import scala.concurrent.ExecutionContext.Implicits.global
 
+        println("************** SINKS size is: " + sinks size)
         //Assuming that we will send to only one Sink for now
-        sinks.headOption.map {sink =>
+        sinks.headOption.map { sink =>
           (sink ? Swallow(HttpPill("", HttpHeaders("find", "https://customer-mind.firebaseio.com/melbournecup/stats/live/"
             + horseStats._1 + ".json"), 1), Channel("http/firebase")))
             .collect {

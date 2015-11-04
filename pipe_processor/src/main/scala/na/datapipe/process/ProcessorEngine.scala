@@ -1,4 +1,4 @@
-package na.datapipe.processor
+package na.datapipe.process
 
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory

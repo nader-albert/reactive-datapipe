@@ -1,7 +1,7 @@
 package na.datapipe.spark
 
 import akka.actor.{ActorLogging, Actor}
-import na.datapipe.processor.model.ProcessPill
+import na.datapipe.process.model.ProcessPill
 import org.apache.spark.streaming.receiver.ActorHelper
 
 import scala.concurrent.Await

@@ -4,7 +4,7 @@ import akka.actor.SupervisorStrategy.{Resume, Stop}
 import akka.actor._
 import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
-import na.datapipe.processor.model.{ProcessorJoined, ProcessorRegistration}
+import na.datapipe.process.model.{ProcessorJoined, ProcessorRegistration}
 import na.datapipe.transformer.model.{TransformerRegistration, Transform, KillChildren}
 import na.datapipe.transformer.twitter.TwitterTransformer
 
@@ -28,7 +28,8 @@ class TransformerGuardian(analyzersSystemHost: String, analyzersSystemPort:Strin
   // subscribe to cluster changes, MemberUp
   // re-subscribe when restart
   override def preStart(): Unit = {
-    twitterTransformer = context.actorOf(TwitterTransformer.props(analyzersSystemHost, analyzersSystemPort), "twitter-transformer" + Random.nextInt) //TODO: send an Identity Message and wait for the response
+    twitterTransformer = context.actorOf(TwitterTransformer.props(analyzersSystemHost, analyzersSystemPort),
+      "twitter-transformer" + Random.nextInt) //TODO: send an Identity Message and wait for the response
     cluster.subscribe(self, classOf[MemberUp])
 
     /*cluster.joinSeedNodes(List(Address("akka.tcp", "ClusterSystem", "127.0.0.1" , 2551),
@@ -70,9 +71,9 @@ class TransformerGuardian(analyzersSystemHost: String, analyzersSystemPort:Strin
       println("member: " + m + "is now up")
       register(m)
 
-    case ProcessorRegistration => println("Transformation Guardian --> processor Registration " + "message dessiminated to children: " + context.children)
-      // spread the news, disseminate the update of having a new transformer coming into play.. basically all existing
-      // transformers in the cluster will send this message to register themselves with a newly inserted loader.
+    case ProcessorRegistration => println("Transformation Guardian --> processor Registration " + "message disseminated to children: " + context.children)
+      // spread the news, disseminate the update of having a new processor coming into play.. basically all existing
+      // transformers in the cluster will send this message to register themselves with a newly inserted processor.
       context.children.foreach(_ forward ProcessorJoined) //keep the sender as is, don't change it... as it will be watched by the fine grained ElementLoader !
   }
 

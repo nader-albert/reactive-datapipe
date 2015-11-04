@@ -10,7 +10,7 @@ import na.datapipe.sink.SinkGuardian
  * @since  6/08/2015.
  */
 object SinkEngine extends App {
-  implicit val system = ActorSystem("sinks")
+  implicit val system = ActorSystem("ClusterSystem")
 
   val config = ConfigFactory load
 

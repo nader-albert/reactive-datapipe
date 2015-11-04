@@ -1,4 +1,4 @@
-package na.datapipe.processor.model
+package na.datapipe.process.model
 
 /**
  * @author nader albert

@@ -1,13 +1,15 @@
-package na.datapipe.processor
+package na.datapipe.process
 
 import akka.actor._
 import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import akka.event.LoggingReceive
-import na.datapipe.processor.model.{ProcessPill, ProcessorRegistration}
+import na.datapipe.process.model.{ProcessorJoined, ProcessPill, ProcessorRegistration}
+import na.datapipe.sink.model.SinkRegistration
 import na.datapipe.spark.SparkEngine
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
  * @author nader albert
@@ -28,19 +30,25 @@ class ProcessingGuardian extends Actor with ActorLogging {
   // subscribe to cluster changes, MemberUp
   // re-subscribe when restart
   override def preStart(): Unit = {
-    cluster subscribe(self, classOf[MemberUp])
-
     context.system.actorSelection(sparkPath) ! Identify("spark")
 
-    context.system.actorSelection(sparkPath) ! Identify("sink")
+    //context.system.actorSelection(sparkPath) ! Identify("sink")
 
-    SparkEngine.run //Trigger the spark engine now
+    println("************ running spark ****************")
+
+    Future { //Trigger the spark engine now, but in a another thread, as it will block awaiting termination
+      SparkEngine.run
+    }
+
     /*cluster joinSeedNodes List(Address("akka.tcp", "ClusterSystem", "127.0.0.1" , 2551),
       Address("akka.tcp", "ClusterSystem", "127.0.0.1" , 2552))*/
+
+    cluster subscribe(self, classOf[MemberUp])
   }
+
   override def postStop(): Unit = {
     cluster.unsubscribe(self)
-    SparkEngine.stop  //Will be started again, once this actor is restarted..
+    //SparkEngine.stop  //Will be started again, once this actor is restarted..
     // Is there a probability to miss some data by stopping the spark engine in the middle like this ?
   }
 
@@ -54,13 +62,13 @@ class ProcessingGuardian extends Actor with ActorLogging {
       // an identified sparkPipe will not be duplicated.
 
     case ActorIdentity(resolvedActor, refOption) if resolvedActor == "transformer" && refOption.isDefined =>
-      log info "transformer guardian resolved successfully ! " + refOption.get
+      log info "******************* transformer guardian resolved successfully ! ******************* " + refOption.get
       refOption.get ! ProcessorRegistration
 
-    case ActorIdentity(resolvedActor, refOption) if resolvedActor == "sink" && refOption.isDefined =>
+    /*case ActorIdentity(resolvedActor, refOption) if resolvedActor == "sink" && refOption.isDefined =>
       log info "sink guardian resolved successfully ! " + refOption.get
       context watch refOption.get
-      SparkEngine.addSink(refOption.get) //starts the spark engine, only when there is at least one sink available
+      SparkEngine.addSink(refOption.get) //starts the spark engine, only when there is at least one sink available*/
 
     // Assuming that spark processing engine sits in its own cluster island, and that we don't have control over it !
     // if we can't locate the spark driver system, for any reason here, we can then degrade the level of processing we
@@ -92,6 +100,16 @@ class ProcessingGuardian extends Actor with ActorLogging {
     case Terminated(a) => log info "spark pipe disconnected !" //TODO: check if this is a spark pipe or a sink that has been terminated
       sparkPipes = sparkPipes.filterNot(_ == a)
       log debug "spark pipe is now empty with size = " + sparkPipes.size
+
+    //TODO: The two cases below should be moved to the parent DataTransformer
+    case SinkRegistration =>
+      println ("Sink Registration Received: -> a new Sink is passed to Spark Engine to be linked with the associated pipe !" )
+      context watch sender
+      SparkEngine.addSink(sender)
+
+    case Terminated(a) =>
+      println("one sink has left cluster ! " + "[ " + a + " ]")
+      SparkEngine.removeSink(a)
   }
 
   /**
@@ -99,8 +117,10 @@ class ProcessingGuardian extends Actor with ActorLogging {
    * allow us to receive messages from transformers
    * */
   def register(member: Member): Unit = {
-    if (member.hasRole("pipe_transformer"))
+    if (member.hasRole("pipe_transformer")) {
+      log info "******************* pipe transformer detected **************************** "
       context.actorSelection(RootActorPath(member.address) / "user" / "transformer-guardian") ! Identify("transformer")
+    }
 
     println(member.roles)
   }
