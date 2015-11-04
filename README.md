@@ -8,6 +8,8 @@ It starts with a data source, that can be connected to any source of data stream
 
 Each Sink corresponds to a single destination. Several Sinks could be simultaneously connected to the same data pipe. The data will then translated, transformed and processed once and published to several places
 
+Data Processing is carried out by a set of Spark jobs, integrated with the Processing Engine (pipe-processor)
+
 Each data element passing through the pipe, is called [Data Pill], and hence the pipe is called a pipe of data pills
 The pipe construction is designed to be lazy, meaning that it doesn't ignited until a Sink is connected to it.
 
@@ -22,16 +24,24 @@ The following modules represnt the main constituents of the Reactive Data Pipe.
 * #### Pipe_Processor
   1. This is the place where real processing and data manipulation takes place. 
   2. Acts as the source of information, extracted from a continous stream that came in
+  3. Complex processing is carried out by Spark
 
 * #### Pipe_Sink
   1. Acts as the final sink, into which a stream of processed data pills will be caught.
-  2. 
+
+# Usage
+
+* To run the system, you will need to run each component separaetly (this needs to be changed, and a single script should be able to trigger all components)
+* The entry points for the different components are: 
+* [pipe_source] -> na.datapipe.source.engine.ConsumerEngine
+* [pipe_processor] -> na.datapipe.process.ProcessorEngine
+* [pipe_transformer] -> na.datapipe.transformer.initator.TransformerEngine
+* [pipe_sink] -> na.datapipe.sink.initiator.Sinkengine
+* The order in which, the different components are started, is not relevant. As soon as a component is started, it will attempt to join the cluster. Once joined, every other compoment already in the cluster will be notified and the cluster member list will be modified few seconds later.
+
+* To be able to view the running spark jobs, their execution perfomance, go to: http://10.140.95.31:4040/jobs/
 
 ### TO DO List:
-
-### Spark Integration
-1. Real computation and processing will be carried out by spark jobs 
-2. 
 
 ### Unit Test Cases
 1. ScalaTest
