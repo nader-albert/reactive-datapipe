@@ -3,9 +3,9 @@ package na.datapipe.spark
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import na.datapipe.model.{TweetPill, Tweet}
+import na.datapipe.model.{TextPill, TweetPill, Tweet}
 import na.datapipe.sink.model.{Channel, Swallow}
-import na.datapipe.sink.producers.spray.model.{HttpHeaders, HttpPill}
+import na.datapipe.sink.producers.ws.model.{HttpHeaders, HttpPill}
 
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming._
@@ -15,7 +15,7 @@ import spray.json._
 
 import scala.collection.immutable.{IndexedSeq, Iterable}
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
+import scala.util.{Random, Failure, Success}
 
 /**
  * @author nader albert
@@ -49,7 +49,7 @@ object SparkEngine {
   def removeSink(sink :ActorRef) =
     sinks = sinks - sink
 
- // def stop = actorStream stop
+  def stop = actorStream stop
 
   def run = {
 
@@ -94,7 +94,7 @@ object SparkEngine {
   )))*/
 
     actorStream //TODO: check if the below filter/ map transformations are being combined internally to achieve a single iteration ?!
-      .filter(pill => pill.body.text.content.contains("Sydney")
+      .filter((pill: TweetPill) => pill.body.text.content.contains("Sydney")
       || pill.body.text.content.contains("Brisbane")
       || pill.body.text.content.contains("Hobart")
       || pill.body.text.content.contains("Melbourne")
@@ -134,11 +134,12 @@ object SparkEngine {
         implicit val actorAskTimeout = new Timeout(10 seconds)
         import scala.concurrent.ExecutionContext.Implicits.global
 
-        println("************** SINKS size is: " + sinks size)
+        // TODO: rely on the Mongo Sink instead, to get the values already saved in the database.
+
         //Assuming that we will send to only one Sink for now
         sinks.headOption.map { sink =>
           (sink ? Swallow(HttpPill("", HttpHeaders("find", "https://customer-mind.firebaseio.com/melbournecup/stats/live/"
-            + horseStats._1 + ".json"), 1), Channel("http/firebase")))
+            + horseStats._1 + ".json"), 1), Channel("http://firebase")))
             .collect {
             case response: HttpResponse if response.status == StatusCodes.OK =>
               if (response.entity.data.asString == "null") "0"
@@ -146,15 +147,24 @@ object SparkEngine {
                 println(response.entity.data.asString)
                 response.entity.data.asString
               }
-          } onComplete {
-            case Success(previousCount) =>
-              println("number is " + previousCount)
+            } onComplete {
+                case Success(previousCount) =>
+                  println("number is " + previousCount)
 
-              sink ! Swallow(
-                HttpPill(
-                  (previousCount.toInt + horseStats._2).toString,
-                  HttpHeaders("update", "https://customer-mind.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1),
-                Channel("http/firebase"))
+                //TODO: save the tweets as well
+                //sink ! Swallow(pill, Channel("db://mongo"))
+
+                sink ! Swallow(
+                  TextPill(
+                    (previousCount.toInt + horseStats._2).toString,
+                    Some(Map("method" -> "update")), Random.nextInt),
+                    Channel("db://mongo"))
+
+                sink ! Swallow(
+                  HttpPill(
+                    (previousCount.toInt + horseStats._2).toString,
+                    HttpHeaders("update", "https://customer-mind.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1),
+                  Channel("http://firebase"))
 
             case Failure(exception) => println("EXCEPTION OCCURRED WHILE TRYING TO GET VALUE FROM FIREBASE !" + exception)
           }

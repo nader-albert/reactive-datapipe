@@ -1,4 +1,4 @@
-package na.datapipe.sink.producers.spray
+package na.datapipe.sink.producers.ws
 
 import scala.language.postfixOps
 import scala.concurrent.duration._
@@ -15,7 +15,7 @@ import akka.cluster.ClusterEvent.{MemberUp, CurrentClusterState}
 import spray.can.Http
 import spray.http.{HttpRequest, HttpResponse}
 
-import na.datapipe.sink.producers.spray.model.HttpPill
+import na.datapipe.sink.producers.ws.model.HttpPill
 import na.datapipe.sink.model.{SinkRegistration, Swallow}
 
 /**
@@ -31,10 +31,11 @@ class HttpSink extends Actor with ActorLogging{
 
   override def receive: Receive = {
 
-    case swallow: Swallow[_] =>
+    case swallow: Swallow =>
       swallow.pill match {
-        case httpPill: HttpPill if swallow.channel.name == "http/firebase" =>
+        case httpPill: HttpPill /*if swallow.channel.name == "http://firebase"*/ =>
 
+          log info httpPill.httpMethod.get.toString
           //(httpPill :HttpPill, channel) if channel.name == "http/firebase" =>
 
           // This is a bit tricky... if sender is called directly from inside the onComplete block, it will be referring to
@@ -48,7 +49,7 @@ class HttpSink extends Actor with ActorLogging{
               .mapTo[HttpResponse]
               .onComplete {
               case Success(response: HttpResponse) => {
-                log debug
+                log info
                   " [status] => " + response.status +
                   " [headers] => " + response.headers.foreach(println) +
                   " [body] => " + response.entity.data.asString

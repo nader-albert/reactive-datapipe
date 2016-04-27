@@ -17,7 +17,7 @@ Seq(
   "io.spray"            %%  "spray-can"       % "1.3.3",
   "io.spray"            %%  "spray-routing"   % "1.3.3",
   "io.reactivex"        %%  "rxscala"         % "0.24.1",
-  "org.reactivemongo"   %% "reactivemongo" % "0.11.7",
+  "org.reactivemongo"   %%  "reactivemongo"   % "0.11.7",
   "com.wandoulabs.akka" %%  "spray-websocket" % "0.1.3",
   "org.apache.spark"    %%  "spark-core"      % "1.5.0",
   "org.apache.spark"    %%  "spark-streaming" % "1.5.0",

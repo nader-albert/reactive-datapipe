@@ -1,4 +1,4 @@
-package na.datapipe.sink.producers.spray.model
+package na.datapipe.sink.producers.ws.model
 
 import na.datapipe.model.{Identifiable, TextPill, Pill}
 import spray.http.{HttpMethods, HttpEntity, Uri}
@@ -12,9 +12,9 @@ case class HttpPill(body :String, httpHeaders: HttpHeaders, id: Int)
 
   type Content = String
 
-  override var header:Option[Map[String, Any]] = Some(httpHeaders.headers)
+  override var header:Option[Map[String, String]] = Some(httpHeaders.headers)
 
-  def headers(names: Set[String]): Map[String, Any] = httpHeaders.headers filterKeys names
+  def headers(names: Set[String]): Map[String, String] = httpHeaders.headers filterKeys names
 
   def httpMethod = httpHeaders.headers.find (_._1 == "method") flatMap {
       case (_, "find") => Some(HttpMethods.GET)

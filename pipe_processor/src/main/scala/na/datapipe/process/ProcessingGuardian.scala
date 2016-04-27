@@ -34,7 +34,7 @@ class ProcessingGuardian extends Actor with ActorLogging {
 
     //context.system.actorSelection(sparkPath) ! Identify("sink")
 
-    println("************ running spark ****************")
+    log info "************ running spark ****************"
 
     Future { //Trigger the spark engine now, but in a another thread, as it will block awaiting termination
       SparkEngine.run
@@ -84,7 +84,7 @@ class ProcessingGuardian extends Actor with ActorLogging {
           println("no available spark pipes at the moment ! downgrading the service and doing trivial computations ")
       }*/
 
-    case processPill :ProcessPill if sparkPipes nonEmpty => log info "non empty sparkPipe"
+    case processPill :ProcessPill if sparkPipes nonEmpty => //log info "non empty sparkPipe"
       sparkPipes.head forward processPill //assuming only one spark pipe at the moment.
 
     /** Current snapshot state of the cluster. Sent to new subscriber */
@@ -101,14 +101,13 @@ class ProcessingGuardian extends Actor with ActorLogging {
       sparkPipes = sparkPipes.filterNot(_ == a)
       log debug "spark pipe is now empty with size = " + sparkPipes.size
 
-    //TODO: The two cases below should be moved to the parent DataTransformer
     case SinkRegistration =>
-      println ("Sink Registration Received: -> a new Sink is passed to Spark Engine to be linked with the associated pipe !" )
+      log info "Sink Registration Received: -> a new Sink is passed to Spark Engine to be linked with the associated pipe !"
       context watch sender
       SparkEngine.addSink(sender)
 
     case Terminated(a) =>
-      println("one sink has left cluster ! " + "[ " + a + " ]")
+      log info "one sink has left cluster ! " + "[ " + a + " ]"
       SparkEngine.removeSink(a)
   }
 

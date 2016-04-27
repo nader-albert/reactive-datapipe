@@ -12,5 +12,5 @@ trait Command{
 
 case class Channel(name :String)
 
-case class Swallow[T](pill :Pill, channel :Channel) extends Command
+case class Swallow(pill :Pill, channel :Channel) extends Command
 

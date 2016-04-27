@@ -134,6 +134,6 @@ object TwitterTransformer {
       toText(json.get("text"), json.get("lang")), json.get("retweeted"), None
       /*json.getAsJsonObject("retweeted_status")*/ , json.get("entities"))
 
-    TweetPill(tweet, Some(Map.empty[String,Any].updated("source", "twitter")), Random.nextInt(10000))
+    TweetPill(tweet, Some(Map.empty[String,String].updated("source", "twitter")), Random.nextInt(10000))
   }
 }

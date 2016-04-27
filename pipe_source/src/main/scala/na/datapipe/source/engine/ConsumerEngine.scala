@@ -17,7 +17,7 @@ object ConsumerEngine extends App {
 
   val config = ConfigFactory load
 
-  val applicationConfig: Config = config getConfig "sink_app"
+  val applicationConfig: Config = config getConfig "source_app"
 
   //val transformersConfig = applicationConfig getConfig "transformers"
 

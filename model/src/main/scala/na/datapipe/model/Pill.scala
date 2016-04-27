@@ -12,7 +12,7 @@ package na.datapipe.model
 
 trait Pill {
   type Content
-  var header: Option[Map[String, Any]]
+  var header: Option[Map[String, String]]
   val body: Content
 }
 
@@ -32,13 +32,13 @@ trait Identifiable {
   val id: Int
 }
 
-case class TextPill(body: String, var header: Option[Map[String, Any]], id: Int)
+case class TextPill(body: String, var header: Option[Map[String, String]], id: Int)
   extends Pill with Identifiable {
 
   type Content = String
 }
 
-case class TweetPill(body: Tweet, var header: Option[Map[String, Any]], id: Int)
+case class TweetPill(body: Tweet, var header: Option[Map[String, String]], id: Int)
   extends Pill with Identifiable {
 
   type Content = Tweet

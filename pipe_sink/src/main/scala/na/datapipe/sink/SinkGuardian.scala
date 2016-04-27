@@ -9,7 +9,8 @@ import com.typesafe.config.Config
 import na.datapipe.model.Pill
 import na.datapipe.sink.model.{SinkRegistration, Swallow}
 import na.datapipe.sink.producers.camel.jms.TweetSink
-import na.datapipe.sink.producers.spray.HttpSink
+import na.datapipe.sink.producers.db.mongo.{PillMongoDao, MongoSink}
+import na.datapipe.sink.producers.ws.HttpSink
 import spray.json.{JsonWriter, JsObject, JsValue, JsString}
 
 /**
@@ -27,12 +28,17 @@ class SinkGuardian(sinkConfig :Config) extends Actor with ActorLogging{
 
   val httpSink = context.actorOf(HttpSink.props, name = "http-sink")
 
+  //val pillDao = context.actorOf(Props[PillMongoDao], name = "pill-dao")
+
+  val mongoSink = context.actorOf(MongoSink.props, name = "mongo-sink")
+
+
   override def preStart(): Unit = {
      cluster subscribe(self, classOf[MemberUp])
   }
 
   override def receive: Receive = {
-    case swallow :Swallow[String] if swallow.channel.name.startsWith("camel") =>
+    case swallow :Swallow if swallow.channel.name.startsWith("camel") =>
       println("publishing raw post to transform jms queue")
 
       import spray.json._
@@ -42,10 +48,13 @@ class SinkGuardian(sinkConfig :Config) extends Actor with ActorLogging{
       //TODO: discern the right publisher to send this message to
       camelSink ! CamelMessage(swallow.pill.toJson.toString, Map())
 
-    case swallow :Swallow[String] if swallow.channel.name.startsWith("http") => httpSink forward swallow
-    //TODO: get it from the Pill header instead
+    case swallow :Swallow if swallow.channel.name == "http://firebase" => httpSink forward swallow
 
-    /** Current snapshot state of the cluster. Sent to new subscriber */
+    case swallow :Swallow if swallow.channel.name == "db://mongo" => mongoSink forward swallow
+
+    /**
+     * Current snapshot state of the cluster. Sent to new subscriber
+     * */
     case state: CurrentClusterState => println("current cluster state is: " + "active members are: " + state.members + " unreachable members are: "
       + state.unreachable + " leader is: " + state.leader + " this was seen by: " + state.seenBy)
 
@@ -58,6 +67,8 @@ class SinkGuardian(sinkConfig :Config) extends Actor with ActorLogging{
     /** only when the status of an existing member is changed to up */
     case MemberUp(m) => println("member: " + m + "is now up")
       register(m)
+
+    case _ => println("incorrect swallow received ")
   }
 
   /**

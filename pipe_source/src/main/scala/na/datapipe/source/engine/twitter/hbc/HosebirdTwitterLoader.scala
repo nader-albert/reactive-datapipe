@@ -80,7 +80,7 @@ class HosebirdTwitterLoader(twitterConfig :Config /*, transformersHost: String, 
     Future {
       while (connected) {
         val seq = nextInt(10000)
-        tweetLoader ! Load(TextPill(msgQueue.take, Some(Map.empty[String, Any].updated("source", "twitter")),seq),seq)
+        tweetLoader ! Load(TextPill(msgQueue.take, Some(Map.empty[String, String].updated("source", "twitter")),seq),seq)
       }
     } onComplete {
         case Success(numberOfLines) =>
