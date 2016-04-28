@@ -1,14 +1,11 @@
 package na.datapipe.sink.producers.db.mongo
 
-import java.util
-
 import na.datapipe.model.{Pill, TextPill}
 import na.datapipe.sink.producers.db.PillDao
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.{Macros, BSONDocumentWriter, BSONDocument}
 
-import scala.collection.immutable.HashMap
 import scala.concurrent.Future
 
 /**
@@ -122,6 +119,8 @@ object PillMongoDao {
       } yield BSONDocument((entry._1, entry._2))
 
       documents.fold(BSONDocument.empty)((zero, current) => zero ++ current)
+
+      documents.reduce((zero, current) => zero ++ current)
     }
   }
 
