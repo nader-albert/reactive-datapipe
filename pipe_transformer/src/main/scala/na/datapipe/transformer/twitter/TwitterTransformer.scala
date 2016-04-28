@@ -1,26 +1,26 @@
 package na.datapipe.transformer.twitter
 
-import akka.actor.{Terminated, ActorRef, Props}
+import akka.actor.{Terminated, Props}
 import com.google.gson._
-import com.google.gson.JsonNull
+import na.datapipe.model.social.SocialInteraction
 
-import na.datapipe.process.model.{ProcessPill, ProcessorJoined}
+import na.datapipe.model.social._
 import na.datapipe.transformer.DataTransformer
 import na.datapipe.transformer.model.Transform
-import na.datapipe.model._
+import na.datapipe.process.model.{ProcessPill, ProcessorJoined}
+
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+
+import scala.util.Random
 
 import languageFeature.implicitConversions._
-import scala.util.Random
 
 /**
  * @author nader albert
  * @since  4/08/2015.
  */
-class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHost: String, analyzersSystemPort: String )
-  extends DataTransformer {
-
-  var processingEngines = IndexedSeq.empty[ActorRef]
-  var jobCounter = 0
+class TwitterTransformer extends DataTransformer {
 
   //val analyzer = context.actorSelection("akka.tcp://nlp@" + analyzersSystemPort + ":" + analyzersSystemPort + " /user/analyzer")
 
@@ -34,7 +34,17 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
 
   override def postRestart(reason: Throwable): Unit = println("twitter transformer has been restarted")
 
-  override def receive: Receive = {
+  protected def transformPost(msg: Transform): List[SocialInteraction] = {
+
+    import TwitterTransformer._
+
+    // Since the evidence this TwitterApiTransformer provides can only generate a single SocialPost, then it has to be
+    // wrapped in a list, so as to comply to the transformPost method signature
+
+    List(SocialInteraction(msg.dataPill.body))
+  }
+
+  /*override def receive: Receive = {
 
     case transformTweet :Transform if processingEngines.isEmpty => println ("no available processors !")
 
@@ -46,8 +56,6 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
        * send the transformed post directly to the publisher, so that it can be passed to the
        * relevant listeners as is, without any further processing */
       //publisher ! PublishRawPost(convertedPost)
-
-      import TwitterTransformer._
 
       /**
        * send the transformed post to spark engine for further processing
@@ -72,7 +80,7 @@ class TwitterTransformer(/*processingEngines: Seq[ActorRef],*/analyzersSystemHos
     case Terminated(a) =>
       println("one processor has left cluster ! " + "[ " + a + " ]")
       processingEngines = processingEngines.filterNot(_ == a)
-  }
+  }*/
 }
 
 object TwitterTransformer {
@@ -85,6 +93,162 @@ object TwitterTransformer {
     val parser: JsonParser = new JsonParser
     parser.parse(source).asInstanceOf[JsonObject]
   }
+
+  import scala.languageFeature.implicitConversions
+
+  implicit def toHashTags(jsonElement: JsonObject): List[HashTag] = {
+    require(null != jsonElement)
+
+    var hashTags = List.empty[HashTag]
+    val iterator = jsonElement.getAsJsonArray("hashtags").iterator
+
+    while(iterator hasNext)
+      hashTags = hashTags.::(HashTag(iterator.next.getAsJsonObject.get("text").getAsString)) //TODO: How to append instead of prepend
+
+    hashTags
+  }
+
+  implicit def toMentions(jsonObject: JsonObject): List[Mention]= {
+    require(null != jsonObject && !jsonObject.isJsonNull)
+
+    var user_mentions = List.empty[Mention]
+    val iterator = jsonObject.getAsJsonArray("user_mentions").iterator
+
+    while(iterator hasNext) {
+      val mention = iterator.next
+      if(null != mention && !mention.isJsonNull && mention.getAsJsonObject.get("id") != null)
+        user_mentions = user_mentions.::(Mention(mention.getAsJsonObject.get("id").getAsLong,
+          mention.getAsJsonObject.get("name").getAsString))
+    }
+
+    user_mentions
+  }
+
+  implicit def toLinks(jsonObject: JsonObject): List[URL]= {
+    require(null != jsonObject && !jsonObject.isJsonNull)
+    var user_links = List.empty[URL]
+    val iterator = jsonObject.getAsJsonArray("urls").iterator
+
+    while(iterator hasNext)
+      user_links = user_links.::(URL(iterator.next.getAsJsonObject.get("url").getAsString))
+
+    user_links
+
+    //collectionExtractor[URL](jsonObject.getAsJsonArray("urls"), )
+  }
+
+  implicit def toMedia(jsonArray: JsonArray): List[Media] = {
+    require(null != jsonArray && !jsonArray.isJsonNull)
+    var mediaList = List.empty[Media]
+
+    val mediaIterator = jsonArray.iterator
+    while (mediaIterator hasNext) {
+      val mediaJsonObject = mediaIterator.next.getAsJsonObject
+
+      if (null != mediaJsonObject.get("type") && ! mediaJsonObject.isJsonNull)
+        mediaList =
+          mediaJsonObject.get("type").getAsString match {
+            case v if v == "video" => mediaList.::(Video(/*mediaJsonObject.get("type")*/link = URL(mediaJsonObject.get("media_url")), screenShot = URL.empty))
+            case p if p == "photo" => mediaList.::(Photo(/*mediaJsonObject.get("type")*/link = URL(mediaJsonObject.get("media_url")), picture = URL.empty))
+            case _ => mediaList
+          }
+      //mediaList = mediaList.::(Photo(MediaTypes.PHOTO,/*mediaJsonObject.get("type")*/URL.empty, URL(mediaJsonObject.get("media_url"))))
+    }
+    mediaList
+  }
+
+  /*private def collectionExtractor[T] (jsonArray: JsonArray, extractor: (JsonElement => T)): List[T] = {
+    require(null != jsonArray && !jsonArray.isJsonNull)
+    var extracted_collection = List.empty[T]
+
+    val iterator = jsonArray.iterator
+
+    while(iterator hasNext)
+      extracted_collection = extracted_collection.::(extractor(iterator.next))
+
+    extracted_collection
+  }*/
+
+  implicit def toPoster(json: JsonObject): Poster = {
+    require(null != json && !json.isJsonNull, "poster information not supplied")
+
+    Poster(
+      if (null == json.get("id")) 0 else json.get("id").getAsLong,
+      if (null == json.get("name")) "" else json.get("name").getAsString,
+      PosterCategories.EMPTY, //Not clear how to distinguish the type in a Tweet from TwitterApi
+      if (null == json.get("followers_count")) 0 else json.get("followers_count").getAsInt,
+      if (null == json.get("friends_count")) 0 else json.get("friends_count").getAsInt)
+  }
+
+  implicit def toReply(jsonObject: JsonObject)(implicit conversation_link: Conversation): Option[SocialInteraction]= {
+    if(null == jsonObject || jsonObject.isJsonNull) None
+    else Some(toPost(jsonObject.toString, jsonObject, Some(conversation_link)))
+  }
+
+  implicit def toTextString(jsonElement: JsonElement): String = {
+    require(null != jsonElement && !jsonElement.isJsonNull, "tweet text not supplied")
+    jsonElement.getAsString
+  }
+
+  implicit def toDate(dateTimeString: JsonElement): DateTime = {
+    require(null != dateTimeString && ! dateTimeString.isJsonNull)
+    DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss Z yyyy").parseDateTime(dateTimeString.getAsString)
+  }
+
+  implicit def toPost(source: String, jsonPost: JsonObject): SocialInteraction = toPost(source,jsonPost,None)
+
+  //TODO: What to do with the case where we have for instance 100 retweets for the same tweet. all 100 retweets will have the same tweet as their parent post, each couple will have a unique conversation id though. The same parent tweet, will be posted to NLP 100 times.. that's a problem
+  implicit def toPost(source: String, json: JsonObject, conversation: Option[Conversation]= None): SocialInteraction = {
+    //TODO: This is a hack to support the file extracted from mongo.. needs to be changed
+
+    var hackedJson :JsonObject = null
+
+    if (json.get("text") == null || json.get("text").isJsonNull) {
+      hackedJson = json.getAsJsonObject("tweet")
+      if (hackedJson == null || hackedJson.isJsonNull)
+        hackedJson = json
+    }
+
+    else
+      hackedJson = json
+
+    val text = hackedJson.get("text")
+    val lang = hackedJson.get("lang")
+    val created_time: DateTime = hackedJson.get("created_at")
+
+    val postSource = PostSource(List(hackedJson.get("id").getAsLong))
+    val poster:Poster = hackedJson.getAsJsonObject("user")
+    val channel = PostChannels.TWITTER
+
+    val url = URL("http://")  //TODO: locate the Tweet URL in the incoming model
+    val project = Project(1,"") //Project name should come as a parameter in the message received
+
+    //TODO: shall we link the post with its nested parents with the same conversation?
+    implicit val conversation_link = if(conversation.isDefined) conversation.get else Conversation(Random.nextLong) //for the parent post, this will be generated, for the underneath posts (retweeted
+
+    //The implicit that serves this call is the 'toReply' one.
+    //The retweeted_status section of a Tweet, represents the parent original tweet, that this tweet has been retweeting.
+    //i.e. the parent tweet is actually enclosed in the retweet, not the other way around
+    val replyTo: Option[SocialInteraction] = json getAsJsonObject "retweeted_status" //TODO: check why the 'retweeted' is always set to false, if the Tweet was actually retweeted
+
+    val entitiesInJson = hackedJson getAsJsonObject "entities"
+    val hashTags: List[HashTag] = entitiesInJson
+    val links: List[URL] = entitiesInJson
+    val mentions: List[Mention] = entitiesInJson
+
+    val extendedEntities = hackedJson getAsJsonObject "extended_entities"
+    val media: List[Media]= if(null == extendedEntities || extendedEntities.isJsonNull) Nil else extendedEntities.getAsJsonArray("media")
+
+    val theme = None
+    //val sentiment =
+
+    SocialInteraction(source, postSource, text, created_time, channel, if (replyTo.isDefined) PostTypes.RE_TWEET else PostTypes.TWEET
+      ,url, links, project, Some(poster), medias = media, hashTags, mentions,
+      Some(conversation_link) , replyTo, lang= lang)
+  }
+
+  /*
+    OLD Twitter model Transformation ***
 
   implicit def toTweetPill(source: TextPill): TweetPill = convert(source.body)
 
@@ -135,5 +299,6 @@ object TwitterTransformer {
       /*json.getAsJsonObject("retweeted_status")*/ , json.get("entities"))
 
     TweetPill(tweet, Some(Map.empty[String,String].updated("source", "twitter")), Random.nextInt(10000))
-  }
+  } */
+
 }

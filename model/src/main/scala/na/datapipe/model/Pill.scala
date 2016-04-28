@@ -46,7 +46,7 @@ case class TweetPill(body: Tweet, var header: Option[Map[String, String]], id: I
   type Content = Tweet
 }
 
-case class FacebookPill(body: SocialInteraction, var header: Option[Map[String, String]], id: Int)
+case class SocialPill(body: SocialInteraction, var header: Option[Map[String, String]], id: Int)
   extends Pill with Identifiable {
 
   type Content = SocialInteraction

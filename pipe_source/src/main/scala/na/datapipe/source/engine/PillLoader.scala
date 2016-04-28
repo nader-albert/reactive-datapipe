@@ -44,9 +44,7 @@ trait PillLoader extends Actor {
        * */
        jobCounter += 1
 
-       val text = pill.body
-
-       println(s"loading.... $text")
+       println(s"loading.... $pill.body")
 
        transformers(jobCounter % transformers.size) ! transformCommand(pill, id)
 

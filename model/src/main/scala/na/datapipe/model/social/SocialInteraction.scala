@@ -8,7 +8,7 @@ import scala.util.{Success, Failure, Try, Random}
 
 /**
  * @author nader albert
- * @since   19/11/2015.
+ * @since  19/11/2015.
  *
  */
 
@@ -106,11 +106,11 @@ case class Mention(override val identifier: Long, override val name: String) ext
  * private while the class definition remains accessible from outside
  * */
 case class SocialInteraction private(rawData: String, source_id: PostSource, text: String, creation_at: DateTime,
-                              channel: PostChannel, postType: PostType, url: URL, is_engagement: Boolean,
-                              is_reply: Boolean, media: List[Media], mentions: List[Mention],
-                              hashTags: List[HashTag], links: List[URL], project: Project, poster: Option[Poster],
-                              conversation: Option[Conversation], replyTo: Option[SocialInteraction],
-                              lang: String, is_parsed: Boolean, is_empty: Boolean)
+                                     channel: PostChannel, postType: PostType, url: URL, is_engagement: Boolean,
+                                     is_reply: Boolean, media: List[Media], mentions: List[Mention],
+                                     hashTags: List[HashTag], links: List[URL], project: Project, poster: Option[Poster],
+                                     conversation: Option[Conversation], replyTo: Option[SocialInteraction],
+                                     lang: String, is_parsed: Boolean, is_empty: Boolean)
 
   extends Identifiable {
 
@@ -246,7 +246,6 @@ object MediaTypes{
 }
 
 case class MediaType(name: String)
-
 
 object PostTypes {
   val STATUS = /*StatusPost*/ PostType("status")

@@ -1,6 +1,6 @@
 package na.datapipe.process.model
 
-import na.datapipe.model.TweetPill
+import na.datapipe.model.SocialPill
 
 /**
  * @author nader albert
@@ -8,4 +8,4 @@ import na.datapipe.model.TweetPill
  */
 trait Command
 
-case class ProcessPill(pill :TweetPill) extends Command
+case class ProcessPill(pill :SocialPill) extends Command

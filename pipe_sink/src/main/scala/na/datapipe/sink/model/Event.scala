@@ -6,5 +6,6 @@ package na.datapipe.sink.model
  */
 trait Event
 
+case object SinkJoined extends Event
 case object SinkRegistration extends Event
 

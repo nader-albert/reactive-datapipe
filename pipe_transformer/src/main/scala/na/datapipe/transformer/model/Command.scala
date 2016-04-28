@@ -1,6 +1,6 @@
 package na.datapipe.transformer.model
 
-import na.datapipe.model.{TextPill, Pill}
+import na.datapipe.model.{SocialPill, TextPill, Pill}
 
 /**
  * @author nader albert

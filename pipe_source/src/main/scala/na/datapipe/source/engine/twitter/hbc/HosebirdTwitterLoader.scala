@@ -11,7 +11,7 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor
 import com.twitter.hbc.core.{Client, Constants, HttpHosts}
 import com.twitter.hbc.httpclient.auth.OAuth1
 import com.typesafe.config.Config
-import na.datapipe.model.{TextPill, Pill}
+import na.datapipe.model.{Sources, TextPill, Pill}
 import na.datapipe.source.engine.twitter.TweetLoader
 import na.datapipe.source.engine.{StreamLoader, _}
 import na.datapipe.source.model._
@@ -28,7 +28,7 @@ import scala.util.{Failure, Success}
  * @since  3/08/2015.
  */
 
-class HosebirdTwitterLoader(twitterConfig :Config /*, transformersHost: String, transformersPort: String*/) extends StreamLoader {
+class HosebirdTwitterLoader(twitterConfig :Config) extends StreamLoader {
 
   private var client: Client = null
 
@@ -75,12 +75,12 @@ class HosebirdTwitterLoader(twitterConfig :Config /*, transformersHost: String, 
    * describes the mechanism of consuming from that specific source
    *  */
   def consume(source: DataSource) = {
-    val tweetLoader = context.actorOf(TweetLoader props(/*transformersHost, transformersPort*/), "tweet-loader" + nextInt)
+    val tweetLoader = context.actorOf(TweetLoader props, "tweet-loader" + nextInt)
 
     Future {
       while (connected) {
         val seq = nextInt(10000)
-        tweetLoader ! Load(TextPill(msgQueue.take, Some(Map.empty[String, String].updated("source", "twitter")),seq),seq)
+        tweetLoader ! Load(TextPill(msgQueue.take, Some(Map.empty[String, String].updated("source", Sources.TWITTER_API.name)),seq),seq)
       }
     } onComplete {
         case Success(numberOfLines) =>
@@ -115,11 +115,8 @@ class HosebirdTwitterLoader(twitterConfig :Config /*, transformersHost: String, 
 case class TwitterFilter(tracks :List[String], locations :List[LocationDto])
 
 object HosebirdTwitterLoader {
-  def props(twitterConfig :Config/*, transformersConfig :Config*/) = {
-  //  val transformersHost = transformersConfig.getString("transformers_host")
- //   val transformersPort = transformersConfig.getString("transformers_port")
-
-    Props(classOf[HosebirdTwitterLoader], twitterConfig/*, transformersHost, transformersPort*/)
+  def props(twitterConfig :Config) = {
+    Props(classOf[HosebirdTwitterLoader], twitterConfig)
   }
 
   import scala.languageFeature.implicitConversions._
