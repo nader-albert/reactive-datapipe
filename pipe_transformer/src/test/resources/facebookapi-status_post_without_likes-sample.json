@@ -1,0 +1,77 @@
+{
+  "_id": {
+    "$oid": "55667166dc8855dd9a26622f"
+  },
+  "actions": [
+    {
+      "link": "https://www.facebook.com/140125992680153/posts/1147024225323653",
+      "name": "Comment"
+    },
+    {
+      "link": "https://www.facebook.com/140125992680153/posts/1147024225323653",
+      "name": "Like"
+    }
+  ],
+  "comments": {
+    "data": [
+      {
+        "can_remove": false,
+        "created_time": "2015-05-20T02:42:23+0000",
+        "from": {
+          "category": "Shopping/retail",
+          "id": "140125992680153",
+          "name": "BIG W"
+        },
+        "id": "1147024225323653_1147047778654631",
+        "like_count": 1,
+        "message": "Hi Channi, thanks for posting. We're sorry to say that as we are not able to view the specific ticket that you mentioned we are at a slight disadvantage. We will discuss the matter with the store to ensure that this is looked into and rectified. The scanning policy that you mention is applicable to Supermarkets only and does not apply within Big W. We apologise for any inconvenience that this may have caused. Kind Regards, Big W",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-20T01:54:48+0000",
+        "from": {
+          "id": "780774551988165",
+          "name": "Jaimee Hay"
+        },
+        "id": "1147024225323653_1147036511989091",
+        "like_count": 1,
+        "message": "That policy is only in supermarkets like Coles, woolies etc",
+        "user_likes": false
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "after": "MQ==",
+        "before": "Mg=="
+      }
+    }
+  },
+  "created_time": "2015-05-20T01:18:21+0000",
+  "from": {
+    "id": "1582279662032163",
+    "name": "Channi Cairns"
+  },
+  "id": "140125992680153_1147024225323653",
+  "is_hidden": false,
+  "message": "I went to piablia Hervey BayBig W yesterday. They have the select coffee capsule on special for $3. For the drop zone special. They manager of the store tried telling me that it was only decaff coffee only. The price tag said select coffee. No type or selection. She then showed me the twinnings green tea capsules that were $3. Well the docket said green tea, not another flavour. So I told her I was very confused. Because the docket I saw said select coffee. To me that is all of the select brand. She removed the drop zone special. So I received my coffee for $3. But isn't the scanning policy if it scans at the full price first item free. She wouldn't allow it. She the manager got the worker to staple my receipt copy to the drop zone special tag. \nI think it was wrong  no one else got that special. Can some one tell me why",
+  "privacy": {
+    "allow": "",
+    "deny": "",
+    "description": "",
+    "friends": "",
+    "value": ""
+  },
+  "status_type": "wall_post",
+  "to": {
+    "data": [
+      {
+        "category": "Shopping/retail",
+        "id": "140125992680153",
+        "name": "BIG W"
+      }
+    ]
+  },
+  "type": "status",
+  "updated_time": "2015-05-20T03:02:55+0000"
+}

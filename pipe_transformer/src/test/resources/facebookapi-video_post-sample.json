@@ -1,0 +1,500 @@
+{
+  "_id": {
+    "$oid": "55667166dc8855dd9a266a3d"
+  },
+  "actions": [
+    {
+      "link": "https://www.facebook.com/426016044163988/posts/772078792891043",
+      "name": "Comment"
+    },
+    {
+      "link": "https://www.facebook.com/426016044163988/posts/772078792891043",
+      "name": "Like"
+    }
+  ],
+  "comments": {
+    "data": [
+      {
+        "can_remove": false,
+        "created_time": "2015-05-23T11:14:59+0000",
+        "from": {
+          "id": "617646401647105",
+          "name": "Deborah Heritage"
+        },
+        "id": "772078792891043_776527462446176",
+        "like_count": 0,
+        "message": "I drove 45minutes to my local Kmart in Bendigo.  To find out that they had none of these items in stock.  This is extremely annoying.",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-21T10:08:18+0000",
+        "from": {
+          "category": "Retail and consumer merchandise",
+          "id": "426016044163988",
+          "name": "Kmart Australia"
+        },
+        "id": "772078792891043_775765372522385",
+        "like_count": 1,
+        "message": "Hi Helen, we're sorry to hear you missed out on the items you were after. Stock for our catalogue items will vary from store to store so we recommend checking in before visiting to avoid disappointment. Alternatively, you can get in touch with our customer care team who will also be able to advise the stock levels at your local store via: http://on.fb.me/1qHJwdV (not available on mobile). Thanks -Kate.",
+        "message_tags": [
+          {
+            "id": "10205327385651921",
+            "length": 5,
+            "name": "Helen",
+            "offset": 3,
+            "type": "user"
+          }
+        ],
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-19T10:32:14+0000",
+        "from": {
+          "id": "10152688867453113",
+          "name": "Gavin Martin"
+        },
+        "id": "772078792891043_775054205926835",
+        "like_count": 1,
+        "message": "What a joke! After searching all NSW stores I located and I purchased the casual chair from you guys at the Bondi Junction Store. Travelled an hour to go purchase the chair and then Went to put it together tonight and open the box to find that it has already been opened and the poles where the incorrect size. I ring the store and ask what is going on and get a response of let me check the display! He then gets back to me and tells me The display was not even put together properly and is not screwed together. Yet another fail from Kmart Australia!!!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-18T01:51:27+0000",
+        "from": {
+          "id": "10152346016900674",
+          "name": "Corey Thomas"
+        },
+        "id": "772078792891043_774564252642497",
+        "like_count": 0,
+        "message": "Just wondering whether any stores in VIC metro have the Luminoso Copper and Wood table lamp in stock!? I can't find it on the website either!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-18T00:51:20+0000",
+        "from": {
+          "id": "10203397862007328",
+          "name": "Karen Stuart"
+        },
+        "id": "772078792891043_774549899310599",
+        "like_count": 0,
+        "message": "Has anyone noticed that this greay blanket has a horrible smell to it?   I bought two different styles of this on Friday and washed them and the grey one has a quite overpowering smell, to the point that it cannot be used.  I am thinking there is something in the dye used in the foreign country it was made in.",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-18T00:21:55+0000",
+        "from": {
+          "id": "10152566016155683",
+          "name": "Vatsala Gurunath"
+        },
+        "id": "772078792891043_774544319311157",
+        "like_count": 0,
+        "message": "Hello, none of the stores in Melbournewestern suburbs have the Studio Floor Lamp... any suggestions how do I get one?",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-17T21:49:30+0000",
+        "from": {
+          "id": "10205121992792370",
+          "name": "Kirsty Sinclair"
+        },
+        "id": "772078792891043_774509989314590",
+        "like_count": 0,
+        "message": "When will the catalogue stock be arriving in the Armadale store? I went twice last week and most of it wasn't anywhere to be found. Ta.",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-17T11:23:48+0000",
+        "from": {
+          "id": "1598939096998726",
+          "name": "Cally Brunner"
+        },
+        "id": "772078792891043_774300959335493",
+        "like_count": 0,
+        "message": "How often do stores restock?",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-17T07:14:44+0000",
+        "from": {
+          "id": "10152549478702965",
+          "name": "Jo Brittles"
+        },
+        "id": "772078792891043_774247436007512",
+        "like_count": 0,
+        "message": "I want this blanket but can't find it to purchase online 😢",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-17T04:34:32+0000",
+        "from": {
+          "id": "867844999926183",
+          "name": "Subhashini Ratnayake"
+        },
+        "id": "772078792891043_774224149343174",
+        "like_count": 0,
+        "message": "Hi Kmart!!! Can u stock up grey casual chairs pls. None of the stores in Melbourne Metro has it",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-16T05:49:18+0000",
+        "from": {
+          "id": "10152456846508443",
+          "name": "Chantelle Maree"
+        },
+        "id": "772078792891043_773898889375700",
+        "like_count": 1,
+        "message": "none of the stores I've been to have the grey casual chairs, and I live in the sydney metro area - do they exist? :( please help kmart",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-16T04:42:13+0000",
+        "from": {
+          "id": "10204346633097636",
+          "name": "Melanie Cannon"
+        },
+        "id": "772078792891043_773888119376777",
+        "like_count": 0,
+        "message": "Just wondering What stores have the casual chairs on pg 14 forsale couldn't find them in my local store?????",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-15T10:42:54+0000",
+        "from": {
+          "id": "10205327385651921",
+          "name": "Helen Curry"
+        },
+        "id": "772078792891043_773608729404716",
+        "like_count": 2,
+        "message": "All talk no stock! Easy to be cheap when you don't have it!!Will keep going to Freedom who at least have advertised merchandise!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-15T10:23:28+0000",
+        "from": {
+          "id": "667448963371589",
+          "name": "Kelly Campbell"
+        },
+        "id": "772078792891043_773604896071766",
+        "like_count": 0,
+        "message": "Brought this blanket. Beautiful and warm. Though one big problem, the smell. It smells so strong of chemicals. I have washed it three times now with the last time using bicarb and a vanilla rinse. It is smelling better now, but it is taking some washing to get there.",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-15T08:14:29+0000",
+        "from": {
+          "id": "10152637649954496",
+          "name": "Fiona Burlison"
+        },
+        "id": "772078792891043_773578026074453",
+        "like_count": 2,
+        "message": "Pity most of the catalogue stock is not available in the Horsham, Vic, 3400 store, and it's not able to be transferred in... We're 2.5 hours away from another Kmart store!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-15T04:17:31+0000",
+        "from": {
+          "id": "10152586779246569",
+          "name": "Caitlin Barrett"
+        },
+        "id": "772078792891043_773525559413033",
+        "like_count": 10,
+        "message": "Would be good if they actually sold all the things in catalogue in stores! Can't find any of the furniture!!!!!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-14T12:10:06+0000",
+        "from": {
+          "id": "10152428561573060",
+          "name": "Louise Leislret"
+        },
+        "id": "772078792891043_773268562772066",
+        "like_count": 18,
+        "message": "Kmart you have amazing homewares but you never have enough product!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-14T01:25:24+0000",
+        "from": {
+          "id": "566017820201320",
+          "name": "Chloe Daffy"
+        },
+        "id": "772078792891043_773084066123849",
+        "like_count": 2,
+        "message": "I want all of it!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-14T09:42:48+0000",
+        "from": {
+          "id": "892768267418498",
+          "name": "Nicky Cox"
+        },
+        "id": "772078792891043_773235602775362",
+        "like_count": 1,
+        "message": "Add it to my list! Jesues woman!! \nIll get back to u im guessing sooner than later lol",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-16T03:53:16+0000",
+        "from": {
+          "id": "10153430761477577",
+          "name": "Vanessa Thorn"
+        },
+        "id": "772078792891043_773876459377943",
+        "like_count": 2,
+        "message": "I tend to agree you see all this cool stuff in catalogue but then can't find in store???",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-14T11:52:43+0000",
+        "from": {
+          "id": "10152863897804621",
+          "name": "Eryn Hanckel"
+        },
+        "id": "772078792891043_773265732772349",
+        "like_count": 0,
+        "message": "I have the grey blanket... Warmest blanket ever!!!",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-23T11:15:49+0000",
+        "from": {
+          "id": "617646401647105",
+          "name": "Deborah Heritage"
+        },
+        "id": "772078792891043_776527615779494",
+        "like_count": 0,
+        "message": "Why put these items on facebook and on the cover of your catalogue if you do not have them in store.  It's just stupid.",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-16T02:19:07+0000",
+        "from": {
+          "id": "10152209874118585",
+          "name": "Dee Molina-Escobar"
+        },
+        "id": "772078792891043_773845249381064",
+        "like_count": 0,
+        "message": "I have just redecorated my son's bedroom using the exact same bed cover and stool. Freaky! Looks great though..",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-14T09:53:43+0000",
+        "from": {
+          "id": "10204074907616029",
+          "name": "Mel Lea-Wood"
+        },
+        "id": "772078792891043_773237626108493",
+        "like_count": 0,
+        "message": "Actually love it.",
+        "user_likes": false
+      },
+      {
+        "can_remove": false,
+        "created_time": "2015-05-21T09:07:35+0000",
+        "from": {
+          "id": "10205327385651921",
+          "name": "Helen Curry"
+        },
+        "id": "772078792891043_775749379190651",
+        "like_count": 0,
+        "message": "Too late KMART ... Went to Freedom and happy to pay a little more for great service and availability ... If you advertise in catalogue and it's not available I think that might be called 'false advertising'",
+        "user_likes": false
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "after": "NzY=",
+        "before": "MTAw"
+      },
+      "next": "https://graph.facebook.com/v2.0/426016044163988_772078792891043/comments?access_token=CAACEdEose0cBAOLf9aLy1woXS3YbrHcFbthC9pT1ScfU9dFaUqEepih9bVmBaNzM4DHZCkyjuIsXZC0HsuMyrFTN9sli6QjAUm0fuBNjL4Xg2pmKOjrnebKp1elfODHxnN8bmsgt60nM0OgXy5ALF2tHl7I3XMZCCNR8rJso1zBgsH48UHScy7IV2qXuJ7tOekFedYZBZBTYZAWqrtthWflZC5ukgKx1TwZD&limit=25&after=NzY%3D"
+    }
+  },
+  "created_time": "2015-05-14T09:30:00+0000",
+  "from": {
+    "category": "Retail and consumer merchandise",
+    "id": "426016044163988",
+    "name": "Kmart Australia"
+  },
+  "icon": "https://www.facebook.com/images/icons/video.gif",
+  "id": "426016044163988_772078792891043",
+  "is_hidden": false,
+  "likes": {
+    "data": [
+      {
+        "id": "10205503490413247",
+        "name": "Louise Morrissey"
+      },
+      {
+        "id": "636136933122806",
+        "name": "Trish Smythe"
+      },
+      {
+        "id": "10204929871949456",
+        "name": "Maria Zammit"
+      },
+      {
+        "id": "10203004056119096",
+        "name": "Eliza Nolan"
+      },
+      {
+        "id": "10152403499160895",
+        "name": "Krissy Murphy"
+      },
+      {
+        "id": "10152504026583441",
+        "name": "Rachael Calleja"
+      },
+      {
+        "id": "10153127827147738",
+        "name": "Karen Gray"
+      },
+      {
+        "id": "1400252316915843",
+        "name": "Leanne Ralla"
+      },
+      {
+        "id": "868846706519456",
+        "name": "Stephanie Wilson"
+      },
+      {
+        "id": "904208786309190",
+        "name": "Maria Juhas"
+      },
+      {
+        "id": "10203743462332252",
+        "name": "Aimee Lahmer"
+      },
+      {
+        "id": "10202970489357766",
+        "name": "Rhiannon Harrison"
+      },
+      {
+        "id": "376087542550038",
+        "name": "Logan Logan"
+      },
+      {
+        "id": "10203831020549631",
+        "name": "Abbey Butterfield"
+      },
+      {
+        "id": "10202963815308870",
+        "name": "Natalie Lawrence"
+      },
+      {
+        "id": "337836416424175",
+        "name": "Abeer Alward"
+      },
+      {
+        "id": "10153127942792664",
+        "name": "Jo Thomas"
+      },
+      {
+        "id": "10151977186931010",
+        "name": "Sonia Holloway"
+      },
+      {
+        "id": "1581159108837149",
+        "name": "Melinda Henderson"
+      },
+      {
+        "id": "10152916779448132",
+        "name": "Bianca Boucher"
+      },
+      {
+        "id": "10152612998746781",
+        "name": "Michelle Shelhot"
+      },
+      {
+        "id": "10152521636588948",
+        "name": "Jo Dee"
+      },
+      {
+        "id": "10205855955472508",
+        "name": "Robert Peluso"
+      },
+      {
+        "id": "10205390645276489",
+        "name": "Sass Wood"
+      },
+      {
+        "id": "10152568313859004",
+        "name": "Nadia Buttons Sula"
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "after": "MTAxNTI1NjgzMTM4NTkwMDQ=",
+        "before": "MTAyMDU1MDM0OTA0MTMyNDc="
+      },
+      "next": "https://graph.facebook.com/v2.0/426016044163988_772078792891043/likes?access_token=CAACEdEose0cBAOLf9aLy1woXS3YbrHcFbthC9pT1ScfU9dFaUqEepih9bVmBaNzM4DHZCkyjuIsXZC0HsuMyrFTN9sli6QjAUm0fuBNjL4Xg2pmKOjrnebKp1elfODHxnN8bmsgt60nM0OgXy5ALF2tHl7I3XMZCCNR8rJso1zBgsH48UHScy7IV2qXuJ7tOekFedYZBZBTYZAWqrtthWflZC5ukgKx1TwZD&limit=25&after=MTAxNTI1NjgzMTM4NTkwMDQ%3D"
+    }
+  },
+  "link": "https://www.facebook.com/KmartAustralia/videos/772078792891043/",
+  "message": "Cosy up this winter with our new Bring the bright home catalogue! http://bit.ly/1dWafAH",
+  "object_id": "772078792891043",
+  "picture": "https://fbcdn-vthumb-a.akamaihd.net/hvthumb-ak-xtf1/v/t15.0-10/p130x130/11189058_772080042890918_2057559468_n.jpg?oh=797f68e17b20b05af8bc7859f5254793&oe=55F2CA40&__gda__=1442013222_769b276479ca1c187ea0269c251491e6",
+  "privacy": {
+    "allow": "",
+    "deny": "",
+    "description": "",
+    "friends": "",
+    "value": ""
+  },
+  "properties": [
+    {
+      "name": "Length",
+      "text": "00:16"
+    }
+  ],
+  "shares": {
+    "count": 26
+  },
+  "source": "https://fbcdn-creative-a.akamaihd.net/hads-ak-xta1/v/t42.1790-4/11194109_772079966224259_2089401682_n.mp4?efg=eyJxZSI6ImZiY2RuX3ZpZGVvX3JhdGVsaW1pdF9yb2xsb3V0Mix2X3JvbGxvdXQifQ%3D%3D&oh=6f57bde877980311c93bffd5be6aca80&oe=556899D8&__gda__=1432939414_191e9570aa9e6b963e42887ae341e85d",
+  "status_type": "added_video",
+  "story": "Kmart Australia uploaded a new video.",
+  "story_tags": {
+    "0": [
+      {
+        "id": "426016044163988",
+        "length": 15,
+        "name": "Kmart Australia",
+        "offset": 0,
+        "type": "page"
+      }
+    ],
+    "31": [
+      {
+        "id": "772078792891043",
+        "length": 5,
+        "name": "",
+        "offset": 31
+      }
+    ]
+  },
+  "type": "video",
+  "updated_time": "2015-05-27T10:26:55+0000"
+}
