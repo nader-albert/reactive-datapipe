@@ -15,6 +15,4 @@ trait Command
 
 //case class TransformTweet(text :String, id: Int) extends TransformElement
 
-case class Transform(dataPill :TextPill, id: Int) extends Command
-
 case object KillChildren extends Command

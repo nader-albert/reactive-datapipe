@@ -8,4 +8,4 @@ import na.datapipe.model.SocialPill
  */
 trait Command
 
-case class ProcessPill(pill :SocialPill) extends Command
+//case class ProcessPill(pill :SocialPill) extends Command

@@ -1,10 +1,9 @@
 package na.datapipe.transformer
 
 import akka.actor.{Terminated, ActorRef, ActorLogging, Actor}
-import na.datapipe.model.SocialPill
+import na.datapipe.model._
 import na.datapipe.process.model.ProcessorJoined
-import na.datapipe.transformer.model.Transform
-import na.datapipe.sink.model.{Channel, Swallow, SinkJoined}
+import na.datapipe.sink.model.SinkJoined
 
 import na.datapipe.model.social.SocialInteraction
 
@@ -29,7 +28,7 @@ trait DataTransformer extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
-    case transformElement :Transform =>
+    case command :Command if Commands ? command == Commands.TransformCommand =>
       jobCounter += 1
 
       //TODO: uncomment the processor access !
@@ -45,8 +44,9 @@ trait DataTransformer extends Actor with ActorLogging {
         //are randomly distributed among the available publishes.. A Twitter Api Transformer always returns one post,
         //as a retweet is always enclosed with its parent tweet, into the same SocialPost (in the replyTo)
 
-        transformPost(transformElement)
-          .foreach(socialInteraction => publisherEngines(jobCounter % publisherEngines.size) ! Swallow(SocialPill(socialInteraction,None,0), Channel("db/mongo")))
+        transformPost(command.pill.asInstanceOf[TextPill]) //Assuming that the TransformCommand only accepts TextPills, so this must always be successful !
+          .foreach(socialInteraction => publisherEngines(jobCounter % publisherEngines.size)
+          ! Commands.SWALLOW(SocialPill(socialInteraction, Some(Map.empty.updated("persistence_channel","db/mongo")),0)))
       }
 
     //log info jobCounter.toString
@@ -72,5 +72,5 @@ trait DataTransformer extends Actor with ActorLogging {
       publisherEngines = publisherEngines.filterNot(_ == actor)
   }
 
-  protected def transformPost(msg: Transform): List[SocialInteraction]
+  protected def transformPost(pill: TextPill): List[SocialInteraction]
 }

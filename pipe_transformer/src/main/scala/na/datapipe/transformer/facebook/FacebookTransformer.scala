@@ -2,10 +2,10 @@ package na.datapipe.transformer.facebook
 
 import akka.actor.{ActorRef, Props}
 import com.google.gson.{JsonParser, JsonElement, JsonObject}
+import na.datapipe.model.TextPill
 
 import na.datapipe.model.social._
 import na.datapipe.transformer.DataTransformer
-import na.datapipe.transformer.model.Transform
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
@@ -25,9 +25,9 @@ class FacebookTransformer(requester: ActorRef) extends DataTransformer {
 
   var posts = HashSet[String]()
 
-  override protected def transformPost(msg: Transform): List[SocialInteraction] = {
+  override protected def transformPost(pill: TextPill): List[SocialInteraction] = {
     val jsonParser = new JsonParser
-    val postJsonObject = jsonParser.parse(msg.dataPill.body).asInstanceOf[JsonObject]
+    val postJsonObject = jsonParser.parse(pill.body).asInstanceOf[JsonObject]
 
     import FacebookTransformer._
 

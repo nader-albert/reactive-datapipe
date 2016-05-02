@@ -42,8 +42,8 @@ object SinkEngine extends App {
 
   //val engBean: RabbitTemplate = ctx.getBean("engagementQueue", classOf[RabbitTemplate])
 
-  println(Some("nader") flatMap(value => Some(value + "noha")) flatMap (value2 => Some (value2 + "Rami")) get)
-  println(Some("nader") flatMap(value => Some(value + "noha") flatMap (value2 => Some (value2 + "Rami"))) get)
+  //println(Some("nader") flatMap(value => Some(value + "noha")) flatMap (value2 => Some (value2 + "Rami")) get)
+  //println(Some("nader") flatMap(value => Some(value + "noha") flatMap (value2 => Some (value2 + "Rami"))) get)
 
   val sink = system.actorOf(SinkGuardian.props(appConfig), name = "sink")
 

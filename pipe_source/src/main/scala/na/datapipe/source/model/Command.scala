@@ -16,8 +16,6 @@ trait Command
  * An Event message is something that has just happened. You are notifying of the event that has just happened.
  * */
 
-case class Load(pill :TextPill, id :Int)
-
 case class ConnectToSource(source: DataSource) extends Command
 case class ConsumeFromSource(source: DataSource) extends Command
 case class DisconnectFromSource(source: DataSource) extends Command

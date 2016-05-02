@@ -1,8 +1,7 @@
 package na.datapipe.sink.producers.db.mongo
 
-import akka.actor.{ActorRef, Actor, ActorLogging, Props}
-import na.datapipe.sink.model.Swallow
-import na.datapipe.sink.producers.db.Persistence.AddOne
+import akka.actor.{Actor, ActorLogging, Props}
+import na.datapipe.model.{Commands, Command}
 
 /**
  * @author nader albert
@@ -13,9 +12,9 @@ class MongoSink extends Actor with ActorLogging with MongoConnector with PillMon
   override def preStart() = connect("customer_mind")
 
   override def receive: Receive = {
-    case swallow: Swallow =>
-      log info ("swallow msg received !" + swallow)
-      save(swallow.pill)
+    case command: Command if Commands ? command == Commands.SwallowCommand =>
+      log info ("swallow msg received !" + command)
+      save(command.pill)
   }
 }
 

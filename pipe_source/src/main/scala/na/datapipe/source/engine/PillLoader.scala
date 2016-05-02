@@ -1,9 +1,9 @@
 package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
-import na.datapipe.model.{TextPill, Pill}
-import na.datapipe.source.model.{Load, LineLoaded, TransformerJoined}
-import na.datapipe.transformer.model.{Command, PillTransformed}
+import na.datapipe.model.{Commands, Command, TextPill, Pill}
+import na.datapipe.source.model.{LineLoaded, TransformerJoined}
+import na.datapipe.transformer.model.PillTransformed
 
 /**
  * @author nader albert
@@ -27,31 +27,34 @@ trait PillLoader extends Actor {
 
   override def receive: Receive = {
 
-     case load :Load if transformers isEmpty => println("no available transformers !")
+    case command :Command if Commands ? command == Commands.LoadCommand =>
+      if (transformers isEmpty)
+        println("no available transformers !")
+    else {
+        //case load :Load if transformers isEmpty => println("no available transformers !")
+        //case Load(pill,id) =>
 
-     case Load(pill,id) =>
-
-      /** The old way to try to locate the remote transformer.
+        /** The old way to try to locate the remote transformer.
 
       val transformer: ActorSelection = context.actorSelection("akka.tcp://transformers@" + host + ":"
         + port + "/user/transformer")
 
       transformer ! transformCommand(elem,id) //TransformLine (elem, id)
-      */
+          */
 
-      /**
-       * Checking all Transformers currently in the cluster and picking one of them randomly (based on a sequential list)
-       * */
-       jobCounter += 1
+        /**
+         * Checking all Transformers currently in the cluster and picking one of them randomly (based on a sequential list)
+         **/
+        jobCounter += 1
 
-       println(s"loading.... $pill.body")
+        println(s"loading.... $command.pill.body")
 
-       transformers(jobCounter % transformers.size) ! transformCommand(pill, id)
+        transformers(jobCounter % transformers.size) ! Commands.TRANSFORM(command.pill.asInstanceOf[TextPill], 5) //transformCommand(command.pill, 4)
 
-      // This is a trial code, to send the post to the processor directly without passing through the transformer...
-      // should be deleted
+        // This is a trial code, to send the post to the processor directly without passing through the transformer...
+        // should be deleted
 
-      /*
+        /*
       import scala.concurrent.duration._
 
       val timeout = 20 seconds
@@ -61,7 +64,7 @@ trait PillLoader extends Actor {
       if(Random.nextBoolean) throw new LoadRuntimeException(new RuntimeException(" just a random dummy exception! "))
 
       processor ! ProcessCommand(elem) */
-
+      }
     case PillTransformed(id) => context.parent ! LineLoaded(id)
 
     case TransformerJoined if !transformers.contains(sender) =>

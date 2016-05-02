@@ -3,8 +3,7 @@ package na.datapipe.spark
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import na.datapipe.model.{TextPill, TweetPill, Tweet}
-import na.datapipe.sink.model.{Channel, Swallow}
+import na.datapipe.model._
 import na.datapipe.sink.producers.ws.model.{HttpHeaders, HttpPill}
 
 import org.apache.spark.SparkConf
@@ -138,8 +137,8 @@ object SparkEngine {
 
         //Assuming that we will send to only one Sink for now
         sinks.headOption.map { sink =>
-          (sink ? Swallow(HttpPill("", HttpHeaders("find", "https://customer-mind.firebaseio.com/melbournecup/stats/live/"
-            + horseStats._1 + ".json"), 1), Channel("http://firebase")))
+          (sink ? Commands.SWALLOW(
+            HttpPill("", HttpHeaders("find", "https://customer-mind.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1))) //, Channel("http://firebase")))
             .collect {
             case response: HttpResponse if response.status == StatusCodes.OK =>
               if (response.entity.data.asString == "null") "0"
@@ -154,17 +153,17 @@ object SparkEngine {
                 //TODO: save the tweets as well
                 //sink ! Swallow(pill, Channel("db://mongo"))
 
-                sink ! Swallow(
+                sink ! Commands.SWALLOW(
                   TextPill(
                     (previousCount.toInt + horseStats._2).toString,
-                    Some(Map("method" -> "update")), Random.nextInt),
-                    Channel("db://mongo"))
+                    Some(Map("method" -> "update" , "persistence_channel" -> "db://mongo")), Random.nextInt))
+                    //Channel("db://mongo"))
 
-                sink ! Swallow(
+                sink ! Commands.SWALLOW(
                   HttpPill(
                     (previousCount.toInt + horseStats._2).toString,
-                    HttpHeaders("update", "https://customer-mind.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1),
-                  Channel("http://firebase"))
+                    HttpHeaders("update", "https://customer-mind.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1)) //, TODO: Think about how to add the channel name
+                  //Channel("http://firebase"))
 
             case Failure(exception) => println("EXCEPTION OCCURRED WHILE TRYING TO GET VALUE FROM FIREBASE !" + exception)
           }

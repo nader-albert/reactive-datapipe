@@ -11,7 +11,7 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor
 import com.twitter.hbc.core.{Client, Constants, HttpHosts}
 import com.twitter.hbc.httpclient.auth.OAuth1
 import com.typesafe.config.Config
-import na.datapipe.model.{Sources, TextPill, Pill}
+import na.datapipe.model.{Commands, Sources, TextPill, Pill}
 import na.datapipe.source.engine.twitter.TweetLoader
 import na.datapipe.source.engine.{StreamLoader, _}
 import na.datapipe.source.model._
@@ -80,7 +80,7 @@ class HosebirdTwitterLoader(twitterConfig :Config) extends StreamLoader {
     Future {
       while (connected) {
         val seq = nextInt(10000)
-        tweetLoader ! Load(TextPill(msgQueue.take, Some(Map.empty[String, String].updated("source", Sources.TWITTER_API.name)),seq),seq)
+        tweetLoader ! Commands.LOAD(TextPill(msgQueue.take, Some(Map.empty[String, String].updated("source", Sources.TWITTER_API.name)),seq),seq)
       }
     } onComplete {
         case Success(numberOfLines) =>

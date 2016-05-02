@@ -4,7 +4,8 @@ import akka.actor._
 import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import akka.event.LoggingReceive
-import na.datapipe.process.model.{ProcessorJoined, ProcessPill, ProcessorRegistration}
+import na.datapipe.model.{Command, Commands}
+import na.datapipe.process.model.{ProcessorJoined, ProcessorRegistration}
 import na.datapipe.sink.model.SinkRegistration
 import na.datapipe.spark.SparkEngine
 
@@ -65,16 +66,12 @@ class ProcessingGuardian extends Actor with ActorLogging {
       log info "******************* transformer guardian resolved successfully ! ******************* " + refOption.get
       refOption.get ! ProcessorRegistration
 
-    /*case ActorIdentity(resolvedActor, refOption) if resolvedActor == "sink" && refOption.isDefined =>
-      log info "sink guardian resolved successfully ! " + refOption.get
-      context watch refOption.get
-      SparkEngine.addSink(refOption.get) //starts the spark engine, only when there is at least one sink available*/
-
-    // Assuming that spark processing engine sits in its own cluster island, and that we don't have control over it !
-    // if we can't locate the spark driver system, for any reason here, we can then degrade the level of processing we
-    // provide to a lower level. temporarily until the spark driver cluster comes in again !
-    case processPill :ProcessPill if sparkPipes isEmpty => log info "empty spark-pipe, will try to resolve another one "
-      context.system.actorSelection(sparkPath) ! Identify("spark") /*resolveOne(10 seconds) onComplete {
+    case command: Command  if Commands ? command == Commands.ProcessCommand =>
+      if (sparkPipes isEmpty) {
+        log info "empty spark-pipe, will try to resolve another one "
+        context.system.actorSelection(sparkPath) ! Identify("spark")
+      }
+      /*resolveOne(10 seconds) onComplete {
         case Success(spark) =>
           sparkPipes = sparkPipes.::(spark) //don't try to look it up next time !
           spark forward processTweet
@@ -82,10 +79,22 @@ class ProcessingGuardian extends Actor with ActorLogging {
         case Failure(failure) =>
           //TODO: Trivial type of processing that doesn't require spark. can be considered as the minimum level of service
           println("no available spark pipes at the moment ! downgrading the service and doing trivial computations ")
-      }*/
+        }*/
 
-    case processPill :ProcessPill if sparkPipes nonEmpty => //log info "non empty sparkPipe"
-      sparkPipes.head forward processPill //assuming only one spark pipe at the moment.
+      else {
+        log info "non empty sparkPipe"
+        sparkPipes.head forward Commands.PROCESS(command.pill)
+      }
+      /*
+      case ActorIdentity(resolvedActor, refOption) if resolvedActor == "sink" && refOption.isDefined =>
+        log info "sink guardian resolved successfully ! " + refOption.get
+        context watch refOption.get
+        SparkEngine.addSink(refOption.get) //starts the spark engine, only when there is at least one sink available*/
+
+
+    // Assuming that spark processing engine sits in its own cluster island, and that we don't have control over it !
+    // if we can't locate the spark driver system, for any reason here, we can then degrade the level of processing we
+    // provide to a lower level. temporarily until the spark driver cluster comes in again !
 
     /** Current snapshot state of the cluster. Sent to new subscriber */
     case state: CurrentClusterState => println("current cluster state is: " + "active members are: " + state.members + " unreachable members are: "

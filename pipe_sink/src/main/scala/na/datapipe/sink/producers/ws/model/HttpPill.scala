@@ -7,7 +7,7 @@ import spray.http.{HttpMethods, HttpEntity, Uri}
  * @author nader albert
  * @since  23/10/2015.
  */
-case class HttpPill(body :String, httpHeaders: HttpHeaders, id: Int)
+case class HttpPill(override val body :String, httpHeaders: HttpHeaders, id: Int)
   extends Pill with Identifiable {
 
   type Content = String

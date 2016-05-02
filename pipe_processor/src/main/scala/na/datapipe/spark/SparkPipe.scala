@@ -1,10 +1,8 @@
 package na.datapipe.spark
 
 import akka.actor.{ActorLogging, Actor}
-import na.datapipe.process.model.ProcessPill
+import na.datapipe.model.{Commands, Command}
 import org.apache.spark.streaming.receiver.ActorHelper
-
-import scala.concurrent.Await
 
 /**
  * @author nader albert
@@ -23,7 +21,7 @@ class SparkPipe extends Actor with ActorHelper {
 
   override def receive: Receive = {
 
-    case ProcessPill(pill) => store(pill)
+    case command: Command  if Commands ? command == Commands.ProcessCommand => store(command.pill)
 
     /*case publish :PublishCommand => publisher ! PublishToFireBase (
       HTTPMessage(PUT,

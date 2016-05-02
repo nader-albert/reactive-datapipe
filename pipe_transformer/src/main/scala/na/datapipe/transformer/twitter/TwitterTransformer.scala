@@ -2,12 +2,11 @@ package na.datapipe.transformer.twitter
 
 import akka.actor.{Terminated, Props}
 import com.google.gson._
+import na.datapipe.model.{TweetPill, TextPill, SocialPill, Command}
 import na.datapipe.model.social.SocialInteraction
 
 import na.datapipe.model.social._
 import na.datapipe.transformer.DataTransformer
-import na.datapipe.transformer.model.Transform
-import na.datapipe.process.model.{ProcessPill, ProcessorJoined}
 
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -34,14 +33,14 @@ class TwitterTransformer extends DataTransformer {
 
   override def postRestart(reason: Throwable): Unit = println("twitter transformer has been restarted")
 
-  protected def transformPost(msg: Transform): List[SocialInteraction] = {
+  protected def transformPost(pill: TextPill): List[SocialInteraction] = {
 
     import TwitterTransformer._
 
     // Since the evidence this TwitterApiTransformer provides can only generate a single SocialPost, then it has to be
     // wrapped in a list, so as to comply to the transformPost method signature
 
-    List(SocialInteraction(msg.dataPill.body))
+    List(SocialInteraction(pill.body))
   }
 
   /*override def receive: Receive = {
@@ -84,8 +83,8 @@ class TwitterTransformer extends DataTransformer {
 }
 
 object TwitterTransformer {
-  def props(analyzersSystemHost: String, analyzersSystemPort: String) =
-      Props(classOf[TwitterTransformer], analyzersSystemHost, analyzersSystemPort)
+  def props =
+      Props(classOf[TwitterTransformer])
 
   import languageFeature.implicitConversions
 
@@ -207,10 +206,7 @@ object TwitterTransformer {
       hackedJson = json.getAsJsonObject("tweet")
       if (hackedJson == null || hackedJson.isJsonNull)
         hackedJson = json
-    }
-
-    else
-      hackedJson = json
+    } else hackedJson = json
 
     val text = hackedJson.get("text")
     val lang = hackedJson.get("lang")

@@ -6,10 +6,10 @@ import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 
 import com.typesafe.config.Config
-import na.datapipe.model.Pill
-import na.datapipe.sink.model.{SinkRegistration, Swallow}
+import na.datapipe.model.{Commands, Command, Pill}
+import na.datapipe.sink.model.SinkRegistration
 import na.datapipe.sink.producers.camel.jms.TweetSink
-import na.datapipe.sink.producers.db.mongo.{PillMongoDao, MongoSink}
+import na.datapipe.sink.producers.db.mongo.MongoSink
 import na.datapipe.sink.producers.ws.HttpSink
 import spray.json.{JsonWriter, JsObject, JsValue, JsString}
 
@@ -38,19 +38,30 @@ class SinkGuardian(sinkConfig :Config) extends Actor with ActorLogging{
   }
 
   override def receive: Receive = {
-    case swallow :Swallow if swallow.channel.name.startsWith("camel") =>
-      println("publishing raw post to transform jms queue")
+
+    case command: Command if Commands ? command == Commands.SwallowCommand =>
+      command.pill.header.fold()(map => map.get("persistence_channel").fold()
+        (value =>
+          if (value.startsWith("camel")) {
+            log info "publishing raw post to transform jms queue"
+            //camelSink ! CamelMessage(command.pill.toJson.toString, Map())
+          }
+          else if (value.equals("http://firebase"))
+            httpSink forward command
+
+          else if (value.equals("db://mongo"))
+            mongoSink forward command
+          ))
 
       import spray.json._
 
       import SinkGuardian._ //TODO: Check why I am required to import this, it should be part of the scope that implicits look into
 
       //TODO: discern the right publisher to send this message to
-      camelSink ! CamelMessage(swallow.pill.toJson.toString, Map())
 
-    case swallow :Swallow if swallow.channel.name == "http://firebase" => httpSink forward swallow
+    //case swallow :Swallow if swallow.channel.name == "http://firebase" => httpSink forward swallow
 
-    case swallow :Swallow if swallow.channel.name == "db://mongo" => mongoSink forward swallow
+    //case swallow :Swallow if swallow.channel.name == "db://mongo" => mongoSink forward swallow
 
     /**
      * Current snapshot state of the cluster. Sent to new subscriber
@@ -62,6 +73,10 @@ class SinkGuardian(sinkConfig :Config) extends Actor with ActorLogging{
 
     case ActorIdentity(resolvedActor, refOption) if resolvedActor == "processor" && refOption.isDefined =>
       log info "******************* processor guardian resolved successfully ! ******************* " + refOption.get
+      refOption.get ! SinkRegistration
+
+    case ActorIdentity(resolvedActor, refOption) if resolvedActor == "transformer" && refOption.isDefined =>
+      log info "******************* transformer guardian resolved successfully ! ******************* " + refOption.get
       refOption.get ! SinkRegistration
 
     /** only when the status of an existing member is changed to up */
@@ -79,6 +94,11 @@ class SinkGuardian(sinkConfig :Config) extends Actor with ActorLogging{
     if (member.hasRole("pipe_processor")) {
       log info "******************* pipe processor detected **************************** "
       context.actorSelection(RootActorPath(member.address) / "user" / "processing-guardian") ! Identify("processor")
+    }
+
+    if (member.hasRole("pipe_transformer")) {
+      log info "******************* new transformer detected **************************** "
+      context.actorSelection(RootActorPath(member.address) / "user" / "transformer-guardian") ! Identify("transformer")
     }
 
     println(member.roles)

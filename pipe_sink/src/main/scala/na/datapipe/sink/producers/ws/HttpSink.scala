@@ -1,5 +1,7 @@
 package na.datapipe.sink.producers.ws
 
+import na.datapipe.model.{Commands, Command}
+
 import scala.language.postfixOps
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -16,7 +18,7 @@ import spray.can.Http
 import spray.http.{HttpRequest, HttpResponse}
 
 import na.datapipe.sink.producers.ws.model.HttpPill
-import na.datapipe.sink.model.{SinkRegistration, Swallow}
+import na.datapipe.sink.model.SinkRegistration
 
 /**
  * @author nader albert
@@ -31,8 +33,8 @@ class HttpSink extends Actor with ActorLogging{
 
   override def receive: Receive = {
 
-    case swallow: Swallow =>
-      swallow.pill match {
+    case command: Command if Commands ? command == Commands.SwallowCommand =>
+      command.pill match {
         case httpPill: HttpPill /*if swallow.channel.name == "http://firebase"*/ =>
 
           log info httpPill.httpMethod.get.toString
