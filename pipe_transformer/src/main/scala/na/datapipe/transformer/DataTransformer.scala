@@ -46,7 +46,7 @@ trait DataTransformer extends Actor with ActorLogging {
 
         transformPost(command.pill.asInstanceOf[TextPill]) //Assuming that the TransformCommand only accepts TextPills, so this must always be successful !
           .foreach(socialInteraction => publisherEngines(jobCounter % publisherEngines.size)
-          ! Commands.SWALLOW(SocialPill(socialInteraction, Some(Map.empty.updated("persistence_channel","db/mongo")),0)))
+          ! Commands.SWALLOW(SocialPill(socialInteraction, Some(Map.empty.updated("persistence_channel","db://mongo")),0)))
       }
 
     //log info jobCounter.toString

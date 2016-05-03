@@ -1,7 +1,7 @@
 package na.datapipe.source.engine
 
 import akka.actor.{Terminated, Actor, ActorRef}
-import na.datapipe.model.{Commands, Command, TextPill, Pill}
+import na.datapipe.model.{Commands, Command, TextPill}
 import na.datapipe.source.model.{LineLoaded, TransformerJoined}
 import na.datapipe.transformer.model.PillTransformed
 
@@ -9,8 +9,6 @@ import na.datapipe.transformer.model.PillTransformed
  * @author nader albert
  * @since  4/08/2015.
  */
-//case class Element(line: String, id: Int)
-
 trait PillLoader extends Actor {
 
   var transformers = IndexedSeq.empty[ActorRef]
@@ -76,10 +74,6 @@ trait PillLoader extends Actor {
       println("one transformer has left cluster ! " + "[ " + a + " ]")
       transformers = transformers.filterNot(_ == a)
   }
-
-  //val host :String
-
-  //val port :String
 
   val transformCommand: (TextPill,Int) => Command
 }

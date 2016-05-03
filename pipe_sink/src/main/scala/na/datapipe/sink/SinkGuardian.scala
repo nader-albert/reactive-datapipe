@@ -1,5 +1,6 @@
 package na.datapipe.sink
 
+import akka.actor.SupervisorStrategy.Resume
 import akka.actor._
 import akka.camel.CamelMessage
 import akka.cluster.{Member, MemberStatus, Cluster}
@@ -32,6 +33,11 @@ class SinkGuardian(sinkConfig :Config) extends Actor with ActorLogging{
 
   val mongoSink = context.actorOf(MongoSink.props, name = "mongo-sink")
 
+  override val supervisorStrategy = OneForOneStrategy() {
+    case ex: NullPointerException =>
+      log error "Null pointer exception during transformation....! Actor will be resumed !" + ex.getMessage + ex.printStackTrace
+      Resume
+  }
 
   override def preStart(): Unit = {
      cluster subscribe(self, classOf[MemberUp])

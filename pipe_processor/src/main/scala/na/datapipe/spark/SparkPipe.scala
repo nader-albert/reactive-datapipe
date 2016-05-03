@@ -25,7 +25,7 @@ class SparkPipe extends Actor with ActorHelper {
 
     /*case publish :PublishCommand => publisher ! PublishToFireBase (
       HTTPMessage(PUT,
-        Uri("https://customer-mind.firebaseio.com/melbournecup/horses/users.json"),
+        Uri("https://data-pipe.firebaseio.com/melbournecup/horses/users.json"),
         //Some("{ \"alanisawesome\": { \"name\": \"Alan Turing\", \"birthday\": \"June 23, 1912\" } }")
         Some (publish.rDD.first().toString)
       )

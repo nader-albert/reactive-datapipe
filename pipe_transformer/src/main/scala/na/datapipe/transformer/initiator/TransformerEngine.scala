@@ -18,6 +18,5 @@ object TransformerEngine extends App {
   val analyzersSystemHost = analyzersConfig getString "analyzers_host"
   val analyzersSystemPort = analyzersConfig getString "analyzers_port"
 
-  val transformer = system actorOf(TransformerGuardian.props(analyzersSystemHost,analyzersSystemPort),
-    name = "transformer-guardian")
+  val transformer = system actorOf(TransformerGuardian.props, name = "transformer-guardian")
 }

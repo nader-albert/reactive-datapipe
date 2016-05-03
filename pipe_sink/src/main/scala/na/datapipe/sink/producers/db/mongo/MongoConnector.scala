@@ -20,11 +20,11 @@ trait MongoConnector {
 
     val connection = driver.connection(List(host), connectionOptions) //a connection manages a pool of connections
 
-    // Gets a reference to the database "customer_mind"
+    // Gets a reference to the database "data-pipe"
     val database = connection(databaseName)
 
     collections match {
-      case Nil =>  collections.::(MongoCollections.RAW_POST).::(MongoCollections.CANONICAL_POST)
+      case Nil =>  collections.::(MongoCollections.TEXT_PILL_REPO).::(MongoCollections.SOCIAL_PILL_REPO)
         .foreach(collectionName => collectionMap = collectionMap.updated(collectionName,database(collectionName)))
 
       case head::tail => collections
@@ -33,10 +33,7 @@ trait MongoConnector {
   }
 }
 
-// http://127.0.0.1:28017/customer_mind/$cmd/?filter_count=canonical_post_twitter_file&limit=1
-// http://127.0.0.1:28017/customer_mind/canonical_post_twitter_file/
-
 object MongoCollections {
-  val RAW_POST = "raw_post"
-  val CANONICAL_POST = "canonical_post_twitter_file"
+  val TEXT_PILL_REPO = "raw_pill"
+  val SOCIAL_PILL_REPO = "canonical_pill"
 }

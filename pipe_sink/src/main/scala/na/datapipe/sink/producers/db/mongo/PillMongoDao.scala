@@ -1,10 +1,10 @@
 package na.datapipe.sink.producers.db.mongo
 
-import na.datapipe.model.{Pill, TextPill}
+import na.datapipe.model.Pill
 import na.datapipe.sink.producers.db.PillDao
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.bson.{Macros, BSONDocumentWriter, BSONDocument}
+import reactivemongo.bson.{BSONDocumentWriter, BSONDocument}
 
 import scala.concurrent.Future
 
@@ -17,40 +17,37 @@ trait PillMongoDao extends PillDao [WriteResult] {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  import PillMongoDao._
+  override def save(pill: Pill) = Future.failed[WriteResult](new IllegalArgumentException("pill type unrecognizable"))
 
-  override def save(pill: Pill) = collectionMap.get(MongoCollections.CANONICAL_POST)
+  /*override def save(pill: Pill) = collectionMap.get(MongoCollections.CANONICAL_POST)
     .fold(Future.failed[WriteResult]
     (new IllegalArgumentException("canonical post collection not initialized")))(collection =>
-      pill match {
-        case text: TextPill => collection.insert[TextPill](text)
-        case _ => Future.failed[WriteResult] (new IllegalArgumentException("canonical post collection not initialized"))
-      })
+    pill match {
+      case text: TextPill => save(text) //collection.insert[TextPill](text)
+      case social: SocialPill => collection.insert[SocialPill](social)
+      case _ => Future.failed[WriteResult](new IllegalArgumentException("pill type unrecognizable"))
+    })*/
 
   def save(collection: BSONCollection, document: BSONDocument) = collection.insert(document)
 
   /** purges the given collection, from all the documents in it
     * @param collectionName: name of the collection, required to be purged. the name has to match one of the collection
-    * names in the enclosed [collectionMap]
-    * */
+    *                      names in the enclosed [collectionMap]
+    **/
   def clear(collectionName: String) = collectionMap.get(collectionName).get.remove(BSONDocument.empty)
 
   def find(query: Map[String, AnyRef]) = {
     //TODO: collect the query items from the map and put them into a MongoDocument.
     val mongoQuery = BSONDocument("age" -> BSONDocument("$gt" -> 27))
 
-    collectionMap.get(MongoCollections.CANONICAL_POST).get.find(mongoQuery).cursor[BSONDocument]().collect[List] ()
+    collectionMap.get(MongoCollections.SOCIAL_PILL_REPO).get.find(mongoQuery).cursor[BSONDocument]().collect[List]()
   }
 
-  def findPost(query: BSONDocument): Future[List[BSONDocument]] = {
-    //val query = BSONDocument("age" -> BSONDocument("$gt" -> 27))
-
-    collectionMap.get(MongoCollections.CANONICAL_POST)
-      .fold(Future.failed[List[BSONDocument]](new IllegalArgumentException("canonical post collection not initialized")))(collection => collection.find(query).cursor[BSONDocument]().collect[List] ())
-  }
+  def findPost(query: BSONDocument): Future[List[BSONDocument]] =
+    collectionMap.get(MongoCollections.SOCIAL_PILL_REPO)
+      .fold(Future.failed[List[BSONDocument]](new IllegalArgumentException("canonical post collection not initialized")))(collection => collection.find(query).cursor[BSONDocument]().collect[List]())
 
   /*override protected def write_one(pill: Pill): Future[WriteResult] = {
-    println("********** a request to add one********* ")
     val pillDocument = BSONDocument(
       "body" -> pill.body.toString,
       "header" -> pill.header.toString, // TODO: header should be inserted as another document...
@@ -59,7 +56,7 @@ trait PillMongoDao extends PillDao [WriteResult] {
     pillCollection.insert(pillDocument)
   }*/
 
- /* override protected def write_all(pills: List[Pill]): Future[List[Long]]= {
+  /* override protected def write_all(pills: List[Pill]): Future[List[Long]]= {
     Future {
       Nil
     }
@@ -123,6 +120,4 @@ object PillMongoDao {
       documents.reduce((zero, current) => zero ++ current)
     }
   }
-
-  implicit val pillBSONWriter :BSONDocumentWriter[TextPill] = Macros.writer[TextPill]
 }

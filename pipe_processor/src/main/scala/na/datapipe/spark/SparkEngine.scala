@@ -75,7 +75,7 @@ object SparkEngine {
 
     /*
   publisher ! PublishToFireBase(HTTPMessage(PUT,
-    Uri("https://customer-mind.firebaseio.com/melbournecup/horses/mentions.json"),
+    Uri("https://data-pipe.firebaseio.com/melbournecup/horses/mentions.json"),
     Some(
       "{ " + "\" cities \" : {" + "\"Sydney\":{ \"duration\": \"past_10_seconds\", \"number_of_mentions\" : \" \"} "
 
@@ -138,7 +138,7 @@ object SparkEngine {
         //Assuming that we will send to only one Sink for now
         sinks.headOption.map { sink =>
           (sink ? Commands.SWALLOW(
-            HttpPill("", HttpHeaders("find", "https://customer-mind.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1))) //, Channel("http://firebase")))
+            HttpPill("", HttpHeaders("find", "https://data-pipe.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1))) //, Channel("http://firebase")))
             .collect {
             case response: HttpResponse if response.status == StatusCodes.OK =>
               if (response.entity.data.asString == "null") "0"
@@ -162,7 +162,7 @@ object SparkEngine {
                 sink ! Commands.SWALLOW(
                   HttpPill(
                     (previousCount.toInt + horseStats._2).toString,
-                    HttpHeaders("update", "https://customer-mind.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1)) //, TODO: Think about how to add the channel name
+                    HttpHeaders("update", "https://data_pipe.firebaseio.com/melbournecup/stats/live/" + horseStats._1 + ".json"), 1)) //, TODO: Think about how to add the channel name
                   //Channel("http://firebase"))
 
             case Failure(exception) => println("EXCEPTION OCCURRED WHILE TRYING TO GET VALUE FROM FIREBASE !" + exception)
