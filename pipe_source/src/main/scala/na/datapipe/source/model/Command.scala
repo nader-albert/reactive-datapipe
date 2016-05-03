@@ -1,7 +1,5 @@
 package na.datapipe.source.model
 
-import na.datapipe.model.{TextPill, Pill}
-
 /**
  * @author nader albert
  * @since  4/08/2015.
@@ -20,9 +18,13 @@ case class ConnectToSource(source: DataSource) extends Command
 case class ConsumeFromSource(source: DataSource) extends Command
 case class DisconnectFromSource(source: DataSource) extends Command
 
+/*case class Source(id: Int, name: String)
+case class StartLoad(source: Source) extends Command
+case class StopLoad(source: Source) extends Command
+*/
+/*
 case class StartFileLoad(fileSourceName :String/*filePath: String*/) extends Command
-
 case class StopFileLoad(fileSourceName :String /*filePath: String*/) extends Command
-
 case class StartTwitterLoad(twitterSourceName :String) extends Command
 case class StopTwitterLoad(twitterSourceName :String) extends Command
+*/

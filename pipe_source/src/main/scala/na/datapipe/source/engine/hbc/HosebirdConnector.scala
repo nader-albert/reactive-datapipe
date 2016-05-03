@@ -1,4 +1,4 @@
-package na.datapipe.source.engine.twitter.hbc
+package na.datapipe.source.engine.hbc
 
 import java.util
 import java.util.concurrent.LinkedBlockingQueue
@@ -11,9 +11,8 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor
 import com.twitter.hbc.core.{Client, Constants, HttpHosts}
 import com.twitter.hbc.httpclient.auth.OAuth1
 import com.typesafe.config.Config
-import na.datapipe.model.{Commands, Sources, TextPill, Pill}
-import na.datapipe.source.engine.twitter.TweetLoader
-import na.datapipe.source.engine.{StreamLoader, _}
+import na.datapipe.model.{Commands, SourcesChannels, TextPill}
+import na.datapipe.source.engine.{StreamConnector, _}
 import na.datapipe.source.model._
 import spray.json.{JsString, JsValue, JsonReader}
 
@@ -28,15 +27,15 @@ import scala.util.{Failure, Success}
  * @since  3/08/2015.
  */
 
-class HosebirdTwitterLoader(twitterConfig :Config) extends StreamLoader {
+class HosebirdConnector(hosebirdConfig :Config) extends StreamConnector {
 
   private var client: Client = null
 
-  private val CLIENT_NAME = twitterConfig getConfig "client" getString "name"
+  private val CLIENT_NAME = hosebirdConfig getConfig "client" getString "name"
 
-  private val authenticationConfig = twitterConfig getConfig "authentication"
+  private val authenticationConfig = hosebirdConfig getConfig "authentication"
 
-  private val filterConfig = twitterConfig getConfig "filters"
+  private val filterConfig = hosebirdConfig getConfig "filters"
 
   private val twitterAuthentication = new OAuth1(
     authenticationConfig getString "oauth.consumer.key",
@@ -75,12 +74,12 @@ class HosebirdTwitterLoader(twitterConfig :Config) extends StreamLoader {
    * describes the mechanism of consuming from that specific source
    *  */
   def consume(source: DataSource) = {
-    val tweetLoader = context.actorOf(TweetLoader props, "tweet-loader" + nextInt)
+    val tweetLoader = context.actorOf(TextPillLoader props, "tweet-stream-consumer" + nextInt)
 
     Future {
       while (connected) {
         val seq = nextInt(10000)
-        tweetLoader ! Commands.LOAD(TextPill(msgQueue.take, Some(Map.empty[String, String].updated("source", Sources.TWITTER_API.name)),seq),seq)
+        tweetLoader ! Commands.LOAD(TextPill(msgQueue.take, Some(Map.empty[String, String].updated("source", SourcesChannels.TWITTER_API.name)),seq),seq)
       }
     } onComplete {
         case Success(numberOfLines) =>
@@ -89,19 +88,19 @@ class HosebirdTwitterLoader(twitterConfig :Config) extends StreamLoader {
 
         case Failure(exception :Throwable) =>
           exception match {
-            case interrupt: LoadInterruptedException => println("interrupt signal received ! ")
+            case interrupt: LoadInterruptedException => log error "interrupt signal received ! "
               self ! LoadingInterrupted(interrupt)
 
-            case t :RuntimeException => println("runtime exception "); self ! LoadingFailed(t)
+            case t :RuntimeException => log error "runtime exception "
+              self ! LoadingFailed(t)
           }
     }
   }
 
   private def setFilters {
-    import na.datapipe.source.engine.twitter.hbc.TwitterFilter._
-    import na.datapipe.source.engine.twitter.hbc.HosebirdTwitterLoader._
+    import HosebirdConnector._
 
-    val filter :TwitterFilter = JsString(filterConfig.getString("match"))
+    val filter :HosebirdFilter = JsString(filterConfig.getString("match"))
 
     if (filter.tracks.isEmpty || filter.tracks.head.trim.isEmpty) {
       throw new RuntimeException("Tracks filter field is required")
@@ -112,12 +111,10 @@ class HosebirdTwitterLoader(twitterConfig :Config) extends StreamLoader {
   }
 }
 
-case class TwitterFilter(tracks :List[String], locations :List[LocationDto])
+case class HosebirdFilter(tracks :List[String], locations :List[LocationDto])
 
-object HosebirdTwitterLoader {
-  def props(twitterConfig :Config) = {
-    Props(classOf[HosebirdTwitterLoader], twitterConfig)
-  }
+object HosebirdConnector {
+  def props(hosebirdConfig :Config) = Props(classOf[HosebirdConnector], hosebirdConfig)
 
   import scala.languageFeature.implicitConversions._
 
@@ -136,13 +133,13 @@ object HosebirdTwitterLoader {
   }
 }
 
-object TwitterFilter {
+object HosebirdFilter {
   import scala.languageFeature.implicitConversions
 
-  implicit def toFilter(jsonText: JsString): TwitterFilter = JsonReader.func2Reader(TwitterFilter.reader).read(jsonText)
+  implicit def toFilter(jsonText: JsString): HosebirdFilter = JsonReader.func2Reader(HosebirdFilter.reader).read(jsonText)
 
-  def reader(json: JsValue): TwitterFilter = {
-    new TwitterFilter(List("the"), Nil) //TODO: parse it correctly 
+  def reader(json: JsValue): HosebirdFilter = {
+    new HosebirdFilter(List("the"), Nil) //TODO: parse it correctly
     //new TwitterFilter(json.asInstanceOf[JsString].tracks,json.asInstanceOf[JsString].locations)
   }
 }

@@ -4,7 +4,7 @@ import akka.actor.SupervisorStrategy.{Restart, Resume, Stop}
 import akka.actor._
 import akka.cluster.{Member, MemberStatus, Cluster}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
-import na.datapipe.model.{Sources, Commands, Command}
+import na.datapipe.model.{SourcesChannels, Commands, Command}
 import na.datapipe.process.model.{ProcessorJoined, ProcessorRegistration}
 import na.datapipe.sink.model.{SinkJoined, SinkRegistration}
 import na.datapipe.transformer.model.{TransformerRegistration, KillChildren}
@@ -19,7 +19,7 @@ import scala.util.Random
  * @since  21/07/2015.
  */
 
-class TransformerGuardian(analyzersSystemHost: String, analyzersSystemPort:String) extends Actor with ActorLogging {
+class TransformerGuardian extends Actor with ActorLogging {
   var twitterTransformer: ActorRef = null
 
   val cluster = Cluster(context.system)
@@ -67,7 +67,7 @@ class TransformerGuardian(analyzersSystemHost: String, analyzersSystemPort:Strin
     case KillChildren => context.children.foreach(_ ! PoisonPill)
 
     case command :Command if Commands ? command == Commands.TransformCommand =>
-      if (command.pill.header.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == Sources.TWITTER_API.name))) {
+      if (command.pill.header.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == SourcesChannels.TWITTER_API.name))) {
         println ("twitter pill received... passing to the relevant transformer.... ")
         twitterTransformer forward command
       }

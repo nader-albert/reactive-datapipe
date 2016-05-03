@@ -14,11 +14,11 @@ class MongoSink extends Actor with ActorLogging with MongoConnector with PillMon
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  override def preStart() = connect("data-pipe")
+  override def preStart() = connect("data_pipe")
 
   override def receive: Receive = {
     case command: Command if Commands ? command == Commands.SwallowCommand =>
-      log info ("swallow msg received !" + command)
+      log info ("swallow msg received !" + command.pill.body)
       save(command.pill).fallbackTo(Future.failed(new IllegalArgumentException))foreach {
         case exception: IllegalArgumentException => log error "Failed to communicate with Mongo Database"
         case result: WriteResult if result.hasErrors => log error "Errors encountered while attempting to persist to document database " + result.errmsg

@@ -2,7 +2,7 @@ package na.datapipe.source.engine
 
 import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
-import na.datapipe.source.model.{StopTwitterLoad, StartTwitterLoad}
+import na.datapipe.model.{SourcesChannels, StopLoad, StartLoad}
 
 /**
  * @author nader albert
@@ -19,26 +19,21 @@ object ConsumerEngine extends App {
 
   val applicationConfig: Config = config getConfig "source_app"
 
-  //val transformersConfig = applicationConfig getConfig "transformers"
-
   val loader = system.actorOf(LoadingGuardian.props(applicationConfig), name = "source-guardian")
 
-  /*var x =0
-  do {
-    println("sending another load command !")
+  //loader ! StartLoad(SourcesChannels.TWITTER_API)
+  //Thread.sleep(550000)
+  //loader ! StopLoad(SourcesChannels.TWITTER_API)
 
-    loader ! StartFileLoad("facebook-demo") //"target_demo_fb_raw_all_28May-sorted.out")
+  //Thread.sleep(50000)
 
-    Thread.sleep(5000)
+  loader ! StartLoad(SourcesChannels.FACEBOOK_FILE)
+  Thread.sleep(50000)
+  loader ! StopLoad(SourcesChannels.FACEBOOK_FILE)
 
-    loader ! StopFileLoad("target_demo_fb_raw_all_28May-sorted.out")
-    x +=1
-  } while(x < 100) */
-
-  loader ! StartTwitterLoad("twitter-stream")
-
-  Thread.sleep(550000)
-
-  loader ! StopTwitterLoad("twitter-stream")
-
+  /*
+    loader ! StartTwitterLoad("twitter-stream")
+    Thread.sleep(550000)
+    loader ! StopTwitterLoad("twitter-stream")
+  */
 }
