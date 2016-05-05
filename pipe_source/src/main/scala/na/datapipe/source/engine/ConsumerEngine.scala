@@ -21,15 +21,18 @@ object ConsumerEngine extends App {
 
   val loader = system.actorOf(LoadingGuardian.props(applicationConfig), name = "source-guardian")
 
-  //loader ! StartLoad(SourcesChannels.TWITTER_API)
-  //Thread.sleep(550000)
-  //loader ! StopLoad(SourcesChannels.TWITTER_API)
+  loader ! StartLoad(SourcesChannels.TWITTER_API)
+  Thread.sleep(10000)
+  loader ! StopLoad(SourcesChannels.TWITTER_API)
+
+
+
 
   //Thread.sleep(50000)
 
-  loader ! StartLoad(SourcesChannels.FACEBOOK_FILE)
-  Thread.sleep(50000)
-  loader ! StopLoad(SourcesChannels.FACEBOOK_FILE)
+  //loader ! StartLoad(SourcesChannels.FACEBOOK_FILE)
+  //Thread.sleep(5000)
+  //loader ! StopLoad(SourcesChannels.FACEBOOK_FILE)
 
   /*
     loader ! StartTwitterLoad("twitter-stream")

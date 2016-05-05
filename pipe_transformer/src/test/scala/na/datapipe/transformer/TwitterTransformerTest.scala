@@ -1,4 +1,4 @@
-package na.datapipe.transformer.transform
+package na.datapipe.transformer
 
 import com.google.gson.JsonParser
 import na.datapipe.model.social._

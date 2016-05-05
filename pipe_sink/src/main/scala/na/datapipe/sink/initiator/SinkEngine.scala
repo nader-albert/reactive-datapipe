@@ -25,10 +25,6 @@ object SinkEngine extends App {
 
   val appConfig: Config = config getConfig "sink_app"
 
-  //val ctx: ApplicationContext = new ClassPathXmlApplicationContext("applicationContext-rabbitMQ.xml")
-
-  //val session: SemantriaSession = ctx.getBean("semantriaSession").asInstanceOf[SemantriaSession]
-
   val camel = CamelExtension(system)
 
   implicit val camelContext = camel context
@@ -68,8 +64,6 @@ object SinkEngine extends App {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  //implicit val reader = Macros.reader[TextPill]
-
   val findAndUpdateFuture = pillCollection.findAndUpdate(
     BSONDocument("body" -> "NADER"),
     BSONDocument("$set" -> BSONDocument("header" -> "YOUSSEF")),
@@ -80,8 +74,6 @@ object SinkEngine extends App {
     case Success(writeResult) =>
       println(s"successfully find and modify document with result: $writeResult")
   }
-
-  //findAndUpdate.map(_.result[TextPill])
 
   val query1 = BSONDocument("body" -> BSONDocument("$gt" -> "NADER"))
   val query2 = BSONDocument("body" -> "NADER")

@@ -45,13 +45,16 @@ trait StreamConnector extends Actor with ActorLogging{
    * loading process during its execution. the actor will be deaf to all other types of messages
    * */
   def consuming(source: DataSource): Receive = {
-    case dscn :DisconnectFromSource => disconnect(dscn.source)
+
+    case dscn :DisconnectFromSource => log warning "recived disconnect msg" ; disconnect(dscn.source)
 
     case LoadingInterrupted(exception) => throw new LoadInterruptedException("INTERRUPT SIGNAL !")
 
     case LoadingFailed(exception) => throw new LoadRuntimeException(exception)
 
     case TransformerJoined => context.children.foreach(_ forward TransformerJoined)
+
+    case _ => log error "*****************************************************"
   }
 
   protected def connect(source: DataSource):Option[DataSource]

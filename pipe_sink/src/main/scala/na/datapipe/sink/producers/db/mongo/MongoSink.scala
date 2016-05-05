@@ -3,8 +3,7 @@ package na.datapipe.sink.producers.db.mongo
 import akka.actor.{Actor, ActorLogging, Props}
 import na.datapipe.model.{Commands, Command}
 import reactivemongo.api.commands.WriteResult
-
-import scala.concurrent.Future
+import reactivemongo.core.errors.ConnectionNotInitialized
 
 /**
  * @author nader albert
@@ -18,11 +17,11 @@ class MongoSink extends Actor with ActorLogging with MongoConnector with PillMon
 
   override def receive: Receive = {
     case command: Command if Commands ? command == Commands.SwallowCommand =>
-      log info ("swallow msg received !" + command.pill.body)
-      save(command.pill).fallbackTo(Future.failed(new IllegalArgumentException))foreach {
-        case exception: IllegalArgumentException => log error "Failed to communicate with Mongo Database"
+
+      save(command.pill).collect {
         case result: WriteResult if result.hasErrors => log error "Errors encountered while attempting to persist to document database " + result.errmsg
-        case result: WriteResult =>
+      } onFailure {
+          case connectionException: ConnectionNotInitialized => log error ("mongo connection problem" + connectionException)
       }
   }
 }

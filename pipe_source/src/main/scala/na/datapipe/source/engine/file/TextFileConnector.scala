@@ -60,7 +60,7 @@ class TextFileConnector extends StreamConnector {
         var linesCount = 0
 
         log info "staying idle, to ensure cluster is well established first"
-        Thread.sleep(50000) //TODO: change this to a proper handling to this issue.. waiting here for 30 seconds until the cluster is well estabilished
+        Thread.sleep(90000) //TODO: change this to a proper handling to this issue.. waiting here for 30 seconds until the cluster is well estabilished
         val inputLines = fileSource.get.connection.get.getLines
 
         //val getLines = () => Source.fromFile("").getLines

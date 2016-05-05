@@ -7,6 +7,7 @@ import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import na.datapipe.model.{SourcesChannels, Commands, Command}
 import na.datapipe.process.model.{ProcessorJoined, ProcessorRegistration}
 import na.datapipe.sink.model.{SinkJoined, SinkRegistration}
+import na.datapipe.transformer.facebook.FacebookTransformer
 import na.datapipe.transformer.model.{TransformerRegistration, KillChildren}
 import na.datapipe.transformer.twitter.TwitterTransformer
 
@@ -21,6 +22,7 @@ import scala.util.Random
 
 class TransformerGuardian extends Actor with ActorLogging {
   var twitterTransformer: ActorRef = null
+  var facebookTransformer: ActorRef = null
 
   val cluster = Cluster(context.system)
 
@@ -29,6 +31,9 @@ class TransformerGuardian extends Actor with ActorLogging {
   override def preStart(): Unit = {
     twitterTransformer = context.actorOf(TwitterTransformer.props,
       "twitter-transformer" + Random.nextInt) //TODO: send an Identity Message and wait for the response
+
+    facebookTransformer = context.actorOf(FacebookTransformer.props, "facebook-transformer" + Random.nextInt)
+
     cluster.subscribe(self, classOf[MemberUp])
 
     /*cluster.joinSeedNodes(List(Address("akka.tcp", "ClusterSystem", "127.0.0.1" , 2551),
@@ -48,8 +53,7 @@ class TransformerGuardian extends Actor with ActorLogging {
       Restart //TODO: Check if that's the correct behavior. The associated post will be dropped and will never be processed
 
     case unsupportedOperation :UnsupportedOperationException =>
-      log error "unsupported operation exception" + unsupportedOperation.printStackTrace
-      log error "transformer actor will be restarted "
+      log error "unsupported operation exception" + unsupportedOperation.printStackTrace + "transformer actor will be restarted "
       Restart
 
     case randomException: Exception => log error ("exception during transformation....! Actor will be stopped !" + randomException)
@@ -67,10 +71,12 @@ class TransformerGuardian extends Actor with ActorLogging {
     case KillChildren => context.children.foreach(_ ! PoisonPill)
 
     case command :Command if Commands ? command == Commands.TransformCommand =>
-      if (command.pill.header.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == SourcesChannels.TWITTER_API.name))) {
-        println ("twitter pill received... passing to the relevant transformer.... ")
+      log info "pill received... passing to the relevant transformer.... "
+
+      if (command.pill.header.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == SourcesChannels.TWITTER_API.name)))
         twitterTransformer forward command
-      }
+      else if (command.pill.header.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == SourcesChannels.FACEBOOK_FILE.name)))
+        facebookTransformer forward command
 
     /*case Transform(pill, id) if pill.header.fold(false)(_.find(_._1 == "source").fold(false)(_._2 == "twitter")) =>
       println ("twitter pill received... passing to the relevant transformer.... ")

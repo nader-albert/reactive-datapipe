@@ -7,6 +7,7 @@ import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.{Macros, BSONDocumentReader, BSONDocumentWriter, BSONDocument}
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  * @author nader albert

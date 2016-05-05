@@ -67,7 +67,7 @@ class LoadingGuardian(loadingConfig :Config) extends Actor with ActorLogging {
 
         log info "twitter loader connected successfully to source !"
       } catch {
-        case _:ConfigException.Missing => //TODO: reply back with a failure message to the caller
+          case _:ConfigException.Missing => //TODO: reply back with a failure message to the caller
       }
 
     /*case StartFileLoad(fileSourceName) =>
@@ -114,11 +114,8 @@ class LoadingGuardian(loadingConfig :Config) extends Actor with ActorLogging {
       // TODO: reply to the sender of the StartFileLoad or StartTwitterLoad message
 
     case StopLoad(source) =>
-      openDataSources find (_._1.path == source) map (openSource => {
-        openSource._2 ! DisconnectFromSource(openSource._1) ; openDataSources = openDataSources - openSource._1 } )
-
-    case StopLoad(source) =>
-      openDataSources find (_._1.path == source) map (openSource => {
+      openDataSources find (_._1.name == source.name) map (openSource => {
+        log error "sending disconnect to: " + openSource._2
         openSource._2 ! DisconnectFromSource(openSource._1) ; openDataSources = openDataSources - openSource._1 } )
 
     case LoadComplete =>

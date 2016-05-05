@@ -19,7 +19,7 @@ import scala.util.Random
 
 case class ElementTransformed(lineId :Int)
 
-class FacebookTransformer(requester: ActorRef) extends DataTransformer {
+class FacebookTransformer extends DataTransformer {
 
   val publisher = context.actorSelection("akka.tcp://publishers@" + "127.0.0.1" + ":" + "2556" + "/user/publisher")
 
@@ -36,8 +36,7 @@ class FacebookTransformer(requester: ActorRef) extends DataTransformer {
 }
 
 object FacebookTransformer {
-  def props(requester: ActorRef) =
-    Props(classOf[FacebookTransformer], requester)
+  def props = Props(classOf[FacebookTransformer])
 
   def generatePosts(jsonPost: JsonObject): List[SocialInteraction] = {
     var socialPostList = List.empty[SocialInteraction]

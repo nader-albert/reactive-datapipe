@@ -1,4 +1,4 @@
-package na.datapipe.transformer.transform
+package na.datapipe.transformer
 
 import na.datapipe.model.social._
 import na.datapipe.transformer.facebook.FacebookTransformer
